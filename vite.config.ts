@@ -22,7 +22,7 @@ export default defineConfig(({mode}) => {
     },
     // We added this section to fix the chunk size warning:
     build: {
-      chunkSizeWarningLimit: 1600,
+      chunkSizeWarningLimit: 3000,
     },
   };
 });
