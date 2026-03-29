@@ -288,53 +288,47 @@ scene.add(trees);
     const clock = new THREE.Clock();
 
     ScrollTrigger.create({
-      trigger: '#scroll-container',
-      start: 'top top',
-      end: 'bottom bottom',
-      scrub: true,
-    onUpdate: (self) => {
-  const p = self.progress * 2;
+  trigger: '#scroll-container',
+  start: 'top top',
+  end: 'bottom bottom',
+  scrub: true,
+  onUpdate: (self) => {
+    const p = self.progress * 2;
 
-  material.uniforms.uPhase.value = p;
-  mesh.rotation.y = self.progress * Math.PI * 4;
-  onPhaseUpdate(p);
+    material.uniforms.uPhase.value = p;
+    mesh.rotation.y = self.progress * Math.PI * 4;
+    onPhaseUpdate(p);
 
-  // 🌲 Trees visibility
-  if (p > 0.5 && p < 1.5) {
-    trees.visible = true;
-  } else {
-    trees.visible = false;
-  }
+    // 🌲 Trees visibility
+    trees.visible = p > 0.5 && p < 1.5;
 
-  // 🌊 Water visibility
-  if (p < 0.8) {
-    water.visible = true;
-  } else {
-    water.visible = false;
-  }
+    // 🌊 Water visibility
+    water.visible = p < 0.8;
 
-  // 🌊 Smooth fade
-  water.material.opacity = Math.max(0, 1 - p * 0.8);
+    // 🌊 Smooth fade
+    water.material.opacity = Math.max(0, 1 - p * 0.8);
 
-  // Particle colors
-  if (p < 0.5) {
-    particlesMaterial.color.set(0xffffff);
-  } else if (p < 1.5) {
-    particlesMaterial.color.set(0x4ade80);
-  } else {
-    particlesMaterial.color.set(0xff4400);
-  }
-},
+    // Particle colors
+    if (p < 0.5) {
+      particlesMaterial.color.set(0xffffff);
+    } else if (p < 1.5) {
+      particlesMaterial.color.set(0x4ade80);
+    } else {
+      particlesMaterial.color.set(0xff4400);
+    }
+  },
+});
 
-    const animate = () => {
+  const animate = () => {
   const elapsedTime = clock.getElapsedTime();
 
   material.uniforms.uTime.value = elapsedTime;
 
-  // 🌊 ADD HERE (water animation)
+  // 🌊 Water animation ✅
   water.rotation.y = elapsedTime * 0.05;
   water.position.y = -1.5 + Math.sin(elapsedTime * 1.5) * 0.05;
 
+  // 🔥 Particle flicker ✅
   particlesMaterial.opacity = 0.4 + Math.sin(elapsedTime * 5) * 0.2;
 
   particlesMesh.rotation.y = elapsedTime * 0.05;
@@ -344,17 +338,7 @@ scene.add(trees);
   requestAnimationFrame(animate);
 };
 
-  // 🔥 ADD THIS LINE HERE
-  particlesMaterial.opacity = 0.4 + Math.sin(elapsedTime * 5) * 0.2;
-
-  particlesMesh.rotation.y = elapsedTime * 0.05;
-  particlesMesh.position.y = Math.sin(elapsedTime * 0.2) * 0.5;
-
-  renderer.render(scene, camera);
-  requestAnimationFrame(animate);
-};
-
-    animate();
+animate();
 
     return () => {
       window.removeEventListener('resize', handleResize);
