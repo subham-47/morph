@@ -154,13 +154,12 @@ export default function App() {
                 { icon: Globe, title: 'Global Data Sync', desc: 'Seamless integration with international geological databases for collaborative research.' },
                 { icon: Flame, title: 'Thermal Analysis', desc: 'Infrared monitoring of geothermal hotspots and magma chamber dynamics.' },
               ].map((feature, i) => (
-                <motion.div
-                  key={feature.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  className="group p-8 bg-slate-900/50 border border-white/5 rounded-2xl hover:bg-slate-800/50 hover:border-blue-500/30 transition-all duration-500"
-                >
+                <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="max-w-xl p-8 md:p-12 bg-slate-900/10 border border-white/10 rounded-3xl shadow-2xl"
+              >
                   <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                     <feature.icon className="w-6 h-6 text-blue-400" />
                   </div>
