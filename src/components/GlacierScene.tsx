@@ -363,6 +363,9 @@ scene.add(trees);
   const animate = () => {
   const elapsedTime = clock.getElapsedTime();
 
+    // 👇 PASTE THIS ONE LINE RIGHT HERE 👇
+  const deltaTime = clock.getDelta();
+
   material.uniforms.uTime.value = elapsedTime;
 
   water.rotation.y = elapsedTime * 0.05;
@@ -372,6 +375,36 @@ scene.add(trees);
 
   particlesMesh.rotation.y = elapsedTime * 0.05;
   particlesMesh.position.y = Math.sin(elapsedTime * 0.2) * 0.5;
+
+    // --- 🌋 LAVA ERUPTION PHYSICS ---
+  if (fountainParticles && fountainParticles.visible) {
+    const positions = fountainGeometry.attributes.position.array as Float32Array;
+    
+    for (let i = 0; i < fountainCount; i++) {
+      const i3 = i * 3;
+
+      // Move particle
+      positions[i3 + 0] += fountainVelocities[i3 + 0];
+      positions[i3 + 1] += fountainVelocities[i3 + 1];
+      positions[i3 + 2] += fountainVelocities[i3 + 2];
+
+      // Gravity pulls it down
+      fountainVelocities[i3 + 1] -= 0.5 * deltaTime; 
+
+      // If it falls below the crater, reset it to explode again
+      if (positions[i3 + 1] < 1.1) {
+        positions[i3 + 0] = 0;
+        positions[i3 + 1] = 1.3;
+        positions[i3 + 2] = 0;
+
+        fountainVelocities[i3 + 0] = (Math.random() - 0.5) * 0.08;
+        fountainVelocities[i3 + 1] = Math.random() * 0.15 + 0.1;
+        fountainVelocities[i3 + 2] = (Math.random() - 0.5) * 0.08;
+      }
+    }
+    fountainGeometry.attributes.position.needsUpdate = true;
+  }
+  // --- END LAVA PHYSICS ---
 
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
