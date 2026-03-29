@@ -172,7 +172,7 @@ export default function App() {
         </section>
 
         {/* Footer */}
-        <footer className="bg-slate-950/40 backdrop-blur-md py-24 px-6 md:px-12 border-t border-white/5">
+        <footer className="bg-transparent backdrop-blur-md py-24 px-6 md:px-12 border-t border-white/10">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-blue-500 rounded-lg rotate-45 flex items-center justify-center">
