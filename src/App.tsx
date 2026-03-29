@@ -118,7 +118,7 @@ export default function App() {
         ))}
 
         {/* Features Section */}
-        <section id="research" className="min-h-screen bg-[#020617] py-32 px-6 md:px-12">
+        <section id="research" className="min-h-screen py-32 px-6 md:px-12">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-24">
               <motion.span 
