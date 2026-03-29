@@ -1,5 +1,5 @@
 import React from 'react';
-import GlacierScene from './components/GlacierScene';
+import { GlacierScene } from './components/GlacierScene';
 import { motion } from 'motion/react';
 import { ArrowRight, Mountain, Wind, Flame, Layers, Globe, Zap } from 'lucide-react';
 import { cn } from './lib/utils';
