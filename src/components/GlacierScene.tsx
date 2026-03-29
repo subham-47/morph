@@ -279,6 +279,37 @@ scene.add(trees);
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particlesMesh);
 
+    // --- 🌋 LAVA FOUNTAIN SETUP ---
+    const fountainCount = 800;
+    const fountainGeometry = new THREE.BufferGeometry();
+    const fountainPositions = new Float32Array(fountainCount * 3);
+    const fountainVelocities = new Float32Array(fountainCount * 3);
+
+    for (let i = 0; i < fountainCount; i++) {
+      fountainPositions[i * 3 + 0] = 0; // x
+      fountainPositions[i * 3 + 1] = 1.3; // y (crater height)
+      fountainPositions[i * 3 + 2] = 0; // z
+
+      fountainVelocities[i * 3 + 0] = (Math.random() - 0.5) * 0.08; // x-spread
+      fountainVelocities[i * 3 + 1] = Math.random() * 0.15 + 0.1; // y-upward shoot
+      fountainVelocities[i * 3 + 2] = (Math.random() - 0.5) * 0.08; // z-spread
+    }
+
+    fountainGeometry.setAttribute('position', new THREE.BufferAttribute(fountainPositions, 3));
+
+    const fountainMaterial = new THREE.PointsMaterial({
+      size: 0.04,
+      color: 0xff4400, // Bright orange
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+
+    const fountainParticles = new THREE.Points(fountainGeometry, fountainMaterial);
+    fountainParticles.visible = false; // Hide it initially
+    scene.add(fountainParticles);
+    // --- END FOUNTAIN SETUP ---
+
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
@@ -317,7 +348,14 @@ scene.add(trees);
     } else if (p < 1.5) {
       particlesMaterial.color.set(0x4ade80);
     } else {
-      particlesMaterial.color.set(0xff4400);
+      particlesMaterial.color.set(0x222222); // Turn general particles to dark volcanic ash
+    }
+
+    // --- 🌋 FOUNTAIN VISIBILITY ---
+    if (fountainParticles) {
+      fountainParticles.visible = p > 1.2;
+      // Fade it in as it erupts
+      fountainMaterial.opacity = Math.max(0, Math.min(1, (p - 1.2) * 2));
     }
   },
 }); 
