@@ -292,31 +292,14 @@ scene.add(trees);
       start: 'top top',
       end: 'bottom bottom',
       scrub: true,
-      onUpdate: (self) => {
+    onUpdate: (self) => {
   const p = self.progress * 2;
 
   material.uniforms.uPhase.value = p;
   mesh.rotation.y = self.progress * Math.PI * 4;
   onPhaseUpdate(p);
 
-  // 🌊 Iceberg water visibility (ADD HERE)
-  if (p < 0.8) {
-    water.visible = true;
-  } else {
-    water.visible = false;
-  }
-
-  // Update particle colors based on phase
-  if (p < 0.5) {
-    particlesMaterial.color.set(0xffffff);
-  } else if (p < 1.5) {
-    particlesMaterial.color.set(0x4ade80);
-  } else {
-    particlesMaterial.color.set(0xff4400);
-  }
-}
-
-        // 🌲 Trees visibility (ADD HERE)
+  // 🌲 Trees visibility
   if (p > 0.5 && p < 1.5) {
     trees.visible = true;
   } else {
@@ -330,9 +313,7 @@ scene.add(trees);
     water.visible = false;
   }
 
-  water.material.opacity = Math.max(0, 1 - p);
-
-    // 🌊 Smooth fade (ADD THIS HERE)
+  // 🌊 Smooth fade
   water.material.opacity = Math.max(0, 1 - p * 0.8);
 
   // Particle colors
@@ -343,18 +324,7 @@ scene.add(trees);
   } else {
     particlesMaterial.color.set(0xff4400);
   }
-}
-        
-        // Update particle colors based on phase
-        if (p < 0.5) {
-            particlesMaterial.color.set(0xffffff); // Snow
-        } else if (p < 1.5) {
-            particlesMaterial.color.set(0x4ade80); // Leaves/Pollen
-        } else {
-            particlesMaterial.color.set(0xff4400); // Ash/Embers
-        }
-      },
-    });
+},
 
     const animate = () => {
   const elapsedTime = clock.getElapsedTime();
