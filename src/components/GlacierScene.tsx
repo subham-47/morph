@@ -170,28 +170,37 @@ const fragmentShader = `
 `;
 
 // ─────────────────────────────────────────────────────────────
-// BACKGROUND PARTICLE SHADER  (NEW: phase-aware colour shift)
+// BACKGROUND PARTICLE SHADER
+// Tiny drifting flakes: snow (ice) → pollen/spores (mountain) → ash (volcano)
 // ─────────────────────────────────────────────────────────────
 const bgParticleVert = `
   attribute float aSize;
   attribute float aSpeed;
+  attribute float aSway;    // unique sway frequency per particle
   uniform   float uTime;
   uniform   float uPhase;
   varying   float vAlpha;
   varying   float vPhase;
+  varying   float vDepth;
 
   void main(){
     vPhase = uPhase;
     vec3 p = position;
-    // Gentle drift upward, reset at top
-    p.y = mod(p.y + uTime * aSpeed * 0.4, 20.0) - 10.0;
-    // Subtle horizontal sway
-    p.x += sin(uTime * aSpeed * 0.3 + position.z * 2.0) * 0.15;
-    // Depth fade
-    vAlpha = clamp(1.0 - abs(p.z) / 8.0, 0.0, 1.0);
+
+    // Fall downward (snow/ash fall), loop seamlessly
+    p.y = mod(p.y - uTime * aSpeed * 0.18, 20.0) - 10.0;
+
+    // Tiny side-to-side sway — looks like real flakes caught in air
+    p.x += sin(uTime * aSway * 0.4 + position.y * 1.3) * 0.06;
+    p.z += cos(uTime * aSway * 0.3 + position.x * 1.1) * 0.04;
+
+    // Depth: particles far from camera are dimmer (atmospheric depth)
+    vDepth = clamp(1.0 - abs(p.z) / 9.0, 0.0, 1.0);
+    vAlpha = vDepth;
 
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
-    gl_PointSize = aSize * (300.0 / -mv.z);
+    // Small fixed size — no perspective scaling so they stay tiny
+    gl_PointSize = aSize;
     gl_Position  = projectionMatrix * mv;
   }
 `;
@@ -200,25 +209,25 @@ const bgParticleFrag = `
   uniform float uPhase;
   varying float vAlpha;
   varying float vPhase;
+  varying float vDepth;
 
   void main(){
-    // Soft circular point
+    // Hard crisp disc — no soft blur so they look like tiny specks not blobs
     float d = length(gl_PointCoord - 0.5) * 2.0;
-    float alpha = (1.0 - smoothstep(0.5, 1.0, d)) * vAlpha;
+    if(d > 1.0) discard;                          // sharp circle edge
+    float alpha = (1.0 - smoothstep(0.7, 1.0, d)) // only very edge feather
+                  * vAlpha * 0.45;
 
-    // Phase-driven colour:
-    // 0 = ice blue, 1 = forest green, 2 = ember orange/red
-    vec3 iceC  = vec3(0.55, 0.85, 1.0);
-    vec3 mtnC  = vec3(0.45, 0.90, 0.45);
-    vec3 volC  = vec3(1.0,  0.38, 0.05);
+    // Phase colours: ice-white → pale green pollen → grey ash
+    vec3 iceC = vec3(0.88, 0.94, 1.00);   // cold white-blue
+    vec3 mtnC = vec3(0.72, 0.90, 0.60);   // pale pollen green
+    vec3 volC = vec3(0.55, 0.50, 0.48);   // grey ash
 
-    vec3 col;
-    if(uPhase <= 1.0)
-      col = mix(iceC, mtnC, uPhase);
-    else
-      col = mix(mtnC, volC, uPhase - 1.0);
+    vec3 col = (uPhase <= 1.0)
+      ? mix(iceC, mtnC, clamp(uPhase, 0.0, 1.0))
+      : mix(mtnC, volC, clamp(uPhase - 1.0, 0.0, 1.0));
 
-    gl_FragColor = vec4(col, alpha * 0.55);
+    gl_FragColor = vec4(col, alpha);
   }
 `;
 
@@ -308,24 +317,27 @@ export const GlacierScene: React.FC<GlacierSceneProps> = ({ onPhaseUpdate }) => 
     }
     scene.add(trees);
 
-    // ── Background particles  (IMPROVED: custom shader, phase-coloured) ──
-    const bgCount      = 3500;                                // more particles
-    const bgPositions  = new Float32Array(bgCount * 3);
-    const bgSizes      = new Float32Array(bgCount);
-    const bgSpeeds     = new Float32Array(bgCount);
+    // ── Background particles: tiny falling flakes / ash ──
+    const bgCount     = 2200;
+    const bgPositions = new Float32Array(bgCount * 3);
+    const bgSizes     = new Float32Array(bgCount);
+    const bgSpeeds    = new Float32Array(bgCount);
+    const bgSways     = new Float32Array(bgCount);
 
     for (let i = 0; i < bgCount; i++) {
-      bgPositions[i * 3 + 0] = (Math.random() - 0.5) * 30;  // wider spread
+      bgPositions[i * 3 + 0] = (Math.random() - 0.5) * 26;
       bgPositions[i * 3 + 1] = (Math.random() - 0.5) * 20;
-      bgPositions[i * 3 + 2] = (Math.random() - 0.5) * 16;
-      bgSizes[i]  = 0.5 + Math.random() * 2.5;               // varied sizes
-      bgSpeeds[i] = 0.2 + Math.random() * 0.8;               // varied drift speeds
+      bgPositions[i * 3 + 2] = (Math.random() - 0.5) * 14;
+      bgSizes[i]  = 0.6 + Math.random() * 1.6;   // max ~2px — never blob-sized
+      bgSpeeds[i] = 0.3 + Math.random() * 0.9;
+      bgSways[i]  = 0.4 + Math.random() * 1.2;
     }
 
     const bgGeo = new THREE.BufferGeometry();
     bgGeo.setAttribute('position', new THREE.BufferAttribute(bgPositions, 3));
     bgGeo.setAttribute('aSize',    new THREE.BufferAttribute(bgSizes,     1));
     bgGeo.setAttribute('aSpeed',   new THREE.BufferAttribute(bgSpeeds,    1));
+    bgGeo.setAttribute('aSway',    new THREE.BufferAttribute(bgSways,     1));
 
     const bgMat = new THREE.ShaderMaterial({
       vertexShader:   bgParticleVert,
