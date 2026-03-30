@@ -273,6 +273,7 @@ scene.add(water);
     const treeGeometry = new THREE.ConeGeometry(0.05, 0.2, 6);
     const treeMaterial = new THREE.MeshStandardMaterial({ 
       color: 0x1f7a1f, 
+      emissive: 0x051105, // "self-glow" so they aren't pitch black
       transparent: true, 
       opacity: 0 
     });
@@ -381,19 +382,23 @@ scene.add(water);
     onPhaseUpdate(p);
 
     // --- 🌲 DYNAMIC TREE POSITIONING & FADE ---
-    // This math mimics the 'mtnSpread' in your shader to keep trees on the surface
-    const currentSpread = 1.0 + (Math.max(0, p - 0.5) * 0.8); 
+    // INCREASED SPREAD: We use a multiplier (2.2) to ensure they stay outside the mountain mesh
+    const currentSpread = 1.0 + (Math.max(0, p - 0.4) * 2.2); 
 
-    if (p > 0.4) { 
+    if (p > 0.5) { // Only start showing/positioning after ice phase
       // Update Tree Positions
       for (let i = 0; i < treeCount; i++) {
         const angle = treeAngles[i];
         const r = treeRadii[i] * currentSpread;
         const x = Math.cos(angle) * r;
         const z = Math.sin(angle) * r;
-        const y = -0.2 + (p * 0.15); // Lift them as the mountain rises
+        
+        // Match the mountain's vertical growth
+        const y = -0.1 + (p * 0.25); 
 
         dummy.position.set(x, y, z);
+        // Tilt trees slightly away from center so they sit on the slope
+        dummy.rotation.set(0, -angle, 0); 
         dummy.updateMatrix();
         trees.setMatrixAt(i, dummy.matrix);
       }
@@ -401,19 +406,19 @@ scene.add(water);
 
       if (p < 1.7) {
         // Healthy Forest
-        gsap.to(treeMaterial, { opacity: 1, duration: 0.4, overwrite: 'auto' });
+        gsap.to(treeMaterial, { opacity: 1, duration: 0.2, overwrite: 'auto' });
         treeMaterial.color.set(0x1f7a1f); 
       } else {
-        // Volcanic Scorching
-        gsap.to(treeMaterial, { opacity: 0, duration: 0.8, overwrite: 'auto' });
+        // Volcanic Scorching - Fade them out as lava arrives
+        gsap.to(treeMaterial, { opacity: 0, duration: 0.6, overwrite: 'auto' });
         treeMaterial.color.set(0x221100); 
       }
     } else {
-      // Pre-vegetation (Glacial Phase)
-      gsap.to(treeMaterial, { opacity: 0, duration: 0.3, overwrite: 'auto' });
+      // FORCE INVISIBLE: This fixes the "black trees during ice phase" bug
+      gsap.to(treeMaterial, { opacity: 0, duration: 0.1, overwrite: 'auto' });
     }
 
-    // 3. Environment Elements (Water & Particles)
+    // 3. Environment Elements
     water.visible = p < 0.8;
     water.material.opacity = Math.max(0, 1 - p * 0.8);
 
@@ -430,7 +435,7 @@ scene.add(water);
       fountainParticles.visible = p > 1.2;
       fountainMaterial.opacity = Math.max(0, Math.min(1, (p - 1.2) * 2));
     }
-}, 
+},
 
   const animate = () => {
   const elapsedTime = clock.getElapsedTime();
