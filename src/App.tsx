@@ -1,5 +1,6 @@
 import React from 'react';
 import GlacierScene from './components/GlacierScene';
+import ContentOverlay from './components/ContentOverlay';
 import { motion } from 'motion/react';
 import { ArrowRight, Mountain, Wind, Flame, Layers, Globe, Zap } from 'lucide-react';
 import { cn } from './lib/utils';
@@ -170,6 +171,7 @@ export default function App() {
             </div>
           </div>
         </section>
+        <ContentOverlay />
 
         {/* Footer */}
         <footer className="bg-transparent backdrop-blur-md py-24 px-6 md:px-12 border-t border-white/10">
