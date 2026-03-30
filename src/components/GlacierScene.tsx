@@ -269,7 +269,11 @@ scene.add(water);
 const treeCount = 200;
 
 const treeGeometry = new THREE.ConeGeometry(0.05, 0.2, 6);
-const treeMaterial = new THREE.MeshStandardMaterial({ color: 0x1f7a1f });
+const treeMaterial = new THREE.MeshStandardMaterial({ 
+  color: 0x1f7a1f, 
+  transparent: true, 
+  opacity: 0 
+});
 
 const trees = new THREE.InstancedMesh(treeGeometry, treeMaterial, treeCount);
 
@@ -378,7 +382,12 @@ scene.add(trees);
     mesh.rotation.y = self.progress * Math.PI * 4;
     onPhaseUpdate(p);
 
-    trees.visible = p > 0.5 && p < 1.5;
+    // --- 🌲 SMOOTH TREE FADE ---
+    if (p > 0.5 && p < 1.5) {
+      gsap.to(treeMaterial, { opacity: 1, duration: 0.5, overwrite: 'auto' });
+    } else {
+      gsap.to(treeMaterial, { opacity: 0, duration: 0.5, overwrite: 'auto' });
+    }
     water.visible = p < 0.8;
     water.material.opacity = Math.max(0, 1 - p * 0.8);
 
