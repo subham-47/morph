@@ -404,20 +404,54 @@ scene.add(water);
       }
       trees.instanceMatrix.needsUpdate = true;
 
-      // 2. Pure Math Fading (No GSAP popping)
+      // --- 🌲 SYNCHRONIZED TREE GROWTH & SMOOTH FADE ---
+    // Tighter spread to keep them on the mountain
+    const spreadMultiplier = 1.0 + (Math.max(0, p - 0.4) * 0.45); 
+
+    if (p > 0.35) { 
+      // 1. Update Tree Positions
+      for (let i = 0; i < treeCount; i++) {
+        const angle = treeAngles[i];
+        const r = treeRadii[i] * spreadMultiplier;
+        const x = Math.cos(angle) * r;
+        const z = Math.sin(angle) * r;
+        const y = -0.2 + (Math.max(0, p - 0.4) * 0.25); 
+
+        dummy.position.set(x, y, z);
+        dummy.rotation.set(0, -angle, 0); 
+        dummy.updateMatrix();
+        trees.setMatrixAt(i, dummy.matrix);
+      }
+      trees.instanceMatrix.needsUpdate = true;
+
+      // 2. Pure Math Fading & Smooth Color Burning
       let treeAlpha = 0;
+      
+      const green = new THREE.Color(0x1f7a1f);
+      const fieryYellow = new THREE.Color(0xff8800); 
+      const charred = new THREE.Color(0x110500); 
+
       if (p > 0.4 && p <= 0.6) {
-        // Fade IN smoothly as mountain grows
-        treeAlpha = (p - 0.4) * 5.0; // Maps 0.4-0.6 to 0.0-1.0
-        treeMaterial.color.set(0x1f7a1f); // Green
-      } else if (p > 0.6 && p <= 1.35) {
-        // Fully visible during mountain phase
+        // Fade IN smoothly
+        treeAlpha = (p - 0.4) * 5.0; 
+        treeMaterial.color.copy(green);
+      } else if (p > 0.6 && p <= 1.1) {
+        // Fully visible healthy forest
         treeAlpha = 1;
-        treeMaterial.color.set(0x1f7a1f);
-      } else if (p > 1.35 && p <= 1.6) {
-        // Fade OUT smoothly as lava arrives
-        treeAlpha = 1.0 - ((p - 1.35) * 4.0); // Maps 1.35-1.6 to 1.0-0.0
-        treeMaterial.color.set(0x221100); // Charred dark brown
+        treeMaterial.color.copy(green);
+      } else if (p > 1.1 && p <= 1.6) {
+        // --- 🌋 THE BURN SEQUENCE ---
+        treeAlpha = p > 1.35 ? 1.0 - ((p - 1.35) * 4.0) : 1;
+
+        const burnProgress = (p - 1.1) * 2.0;
+
+        if (burnProgress < 0.5) {
+          // Phase 1: Green -> Fiery Yellow
+          treeMaterial.color.lerpColors(green, fieryYellow, burnProgress * 2.0);
+        } else {
+          // Phase 2: Fiery Yellow -> Charred Black
+          treeMaterial.color.lerpColors(fieryYellow, charred, (burnProgress - 0.5) * 2.0);
+        }
       }
       
       // Apply exact calculated opacity
@@ -430,6 +464,7 @@ scene.add(water);
     // 3. Environment Elements
     water.visible = p < 0.8;
     water.material.opacity = Math.max(0, 1 - p * 0.8);
+    // ... rest of your code ...
 
     // 4. Lava Fountain Visibility
     if (fountainParticles) {
