@@ -323,7 +323,7 @@ scene.add(water);
     for (let i = 0; i < fountainCount; i++) {
       // Define the fixed parabolic path for each particle
       fountainParams[i * 4 + 0] = Math.random() * Math.PI * 2; // Random angle (0 to 360deg)
-      fountainParams[i * 4 + 1] = Math.random() * 1.8; // Spread distance outward
+      fountainParams[i * 4 + 1] = Math.random() * 2.4; // Spread distance outward
       fountainParams[i * 4 + 2] = Math.random() * 6.0 + 4.0; // Upward jump height
       fountainParams[i * 4 + 3] = Math.random(); // Phase offset so they don't jump at the exact same time
 
