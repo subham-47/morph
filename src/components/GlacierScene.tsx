@@ -283,7 +283,7 @@ scene.add(water);
 
     for (let i = 0; i < treeCount; i++) {
       treeAngles[i] = Math.random() * Math.PI * 2;
-      treeRadii[i] = 1.4 + Math.random() * 0.8; // Base distance from center
+      treeRadii[i] = 1.1 + Math.random() * 0.5; // Base distance from center
 
       const x = Math.cos(treeAngles[i]) * treeRadii[i];
       const z = Math.sin(treeAngles[i]) * treeRadii[i];
@@ -383,7 +383,7 @@ scene.add(water);
 
     // --- 🌲 SYNCHRONIZED TREE GROWTH & SMOOTH FADE ---
     // REDUCED SPREAD: Changed from 2.5 to 0.95 so they stick to the mountain slopes!
-    const spreadMultiplier = 1.0 + (Math.max(0, p - 0.4) * 0.95); 
+    const spreadMultiplier = 1.0 + (Math.max(0, p - 0.4) * 0.45); 
 
     if (p > 0.35) { 
       // 1. Update Tree Positions
