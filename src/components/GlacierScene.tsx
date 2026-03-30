@@ -381,54 +381,55 @@ scene.add(water);
     mesh.rotation.y = self.progress * Math.PI * 4;
     onPhaseUpdate(p);
 
-    // --- 🌲 SYNCHRONIZED TREE GROWTH ---
-    // NEW MATH: Uses 'Math.pow' to match the bulging curve of the mountain shader
-    const spreadMultiplier = 1.0 + Math.pow(Math.max(0, p - 0.4), 1.2) * 2.5; 
+    // --- 🌲 SYNCHRONIZED TREE GROWTH & SMOOTH FADE ---
+    // REDUCED SPREAD: Changed from 2.5 to 0.95 so they stick to the mountain slopes!
+    const spreadMultiplier = 1.0 + (Math.max(0, p - 0.4) * 0.95); 
 
-    if (p > 0.45) { 
-      // Update Tree Positions
+    if (p > 0.35) { 
+      // 1. Update Tree Positions
       for (let i = 0; i < treeCount; i++) {
         const angle = treeAngles[i];
         const r = treeRadii[i] * spreadMultiplier;
         
         const x = Math.cos(angle) * r;
         const z = Math.sin(angle) * r;
-        const y = -0.2 + (p * 0.4); // Lift them up higher as it grows 
+        
+        // Gentle lift to keep them out of the ground
+        const y = -0.2 + (Math.max(0, p - 0.4) * 0.25); 
 
         dummy.position.set(x, y, z);
-        // Tilt trees slightly away from center so they sit on the slope
         dummy.rotation.set(0, -angle, 0); 
         dummy.updateMatrix();
         trees.setMatrixAt(i, dummy.matrix);
       }
       trees.instanceMatrix.needsUpdate = true;
 
-      // GSAP Fade Logic
-      if (p < 1.6) {
-        // Healthy Forest
-        gsap.to(treeMaterial, { opacity: 1, duration: 0.2, overwrite: 'auto' });
-        treeMaterial.color.set(0x1f7a1f); 
-      } else {
-        // Volcanic Scorching - Fade them out as lava arrives
-        gsap.to(treeMaterial, { opacity: 0, duration: 0.6, overwrite: 'auto' });
-        treeMaterial.color.set(0x221100); 
+      // 2. Pure Math Fading (No GSAP popping)
+      let treeAlpha = 0;
+      if (p > 0.4 && p <= 0.6) {
+        // Fade IN smoothly as mountain grows
+        treeAlpha = (p - 0.4) * 5.0; // Maps 0.4-0.6 to 0.0-1.0
+        treeMaterial.color.set(0x1f7a1f); // Green
+      } else if (p > 0.6 && p <= 1.35) {
+        // Fully visible during mountain phase
+        treeAlpha = 1;
+        treeMaterial.color.set(0x1f7a1f);
+      } else if (p > 1.35 && p <= 1.6) {
+        // Fade OUT smoothly as lava arrives
+        treeAlpha = 1.0 - ((p - 1.35) * 4.0); // Maps 1.35-1.6 to 1.0-0.0
+        treeMaterial.color.set(0x221100); // Charred dark brown
       }
+      
+      // Apply exact calculated opacity
+      treeMaterial.opacity = Math.max(0, Math.min(1, treeAlpha));
     } else {
-      // FORCE INVISIBLE: This fixes the "black trees during ice phase" bug
-      gsap.to(treeMaterial, { opacity: 0, duration: 0.1, overwrite: 'auto' });
+      // FORCE INVISIBLE during ice phase
+      treeMaterial.opacity = 0;
     }
 
     // 3. Environment Elements
     water.visible = p < 0.8;
     water.material.opacity = Math.max(0, 1 - p * 0.8);
-
-    if (p < 0.5) {
-      particlesMaterial.color.set(0xffffff); // Snow
-    } else if (p < 1.5) {
-      particlesMaterial.color.set(0x4ade80); // Bio-particles
-    } else {
-      particlesMaterial.color.set(0x222222); // Volcanic Ash
-    }
 
     // 4. Lava Fountain Visibility
     if (fountainParticles) {
