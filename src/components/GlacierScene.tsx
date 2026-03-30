@@ -69,52 +69,80 @@ const vertexShader = `
     vNormal = normalize(normalMatrix * normal);
 
     // Morphing logic
+
     float n = snoise(position * 1.5 + uTime * 0.1);
+
     vNoise = n;
 
-    // --- NEW ICE GEOMETRY START ---
-    vec3 icePos = position;
-    float baseNoise = snoise(position * 1.5) * 0.15;
-    float sharpNoise = 1.0 - abs(snoise(position * 3.5));
-    sharpNoise = pow(sharpNoise, 3.0); 
-    float terrace = step(0.5, fract(position.y * 5.0)) * 0.03;
 
-    if(position.y > 0.05) {
-        icePos *= (0.8 + baseNoise + sharpNoise * 0.15 - terrace);
-        if(icePos.y > 1.1) {
-            icePos.y = mix(icePos.y, 1.1 + snoise(position * 10.0) * 0.02, 0.7);
-        }
+
+    vec3 icePos = position;
+
+    float iceHeight = snoise(position * 2.0) * 0.2;
+
+    if(position.y > 0.1) {
+
+        icePos *= (0.8 + iceHeight);
+
     } else {
-        icePos *= (1.2 - baseNoise);
+
+        icePos *= (1.2 - iceHeight);
+
     }
-    // --- NEW ICE GEOMETRY END ---
+
+
 
     vec3 mtnPos = position;
+
     float mtnHeight = pow(max(0.0, (position.y + 1.0) / 2.0), 0.6) * 2.5;
+
     mtnPos.y = mtnHeight - 0.5 + n * 0.2;
+
     float mtnSpread = (1.0 - pow(max(0.0, (position.y + 1.0) / 2.0), 0.5)) * 2.0 + 0.1;
+
     mtnPos.xz *= mtnSpread;
 
+
+
     vec3 volPos = position;
+
     float volHeight = pow(max(0.0, (position.y + 1.0) / 2.0), 0.5) * 2.6;
+
     if(position.y > 0.85) {
+
         volHeight -= (position.y - 0.85) * 4.0; // Crater
+
     }
+
     volPos.y = volHeight - 0.5 + n * 0.1;
+
     float volSpread = (1.0 - pow(max(0.0, (position.y + 1.0) / 2.0), 0.4)) * 2.2 + 0.1;
+
     volPos.xz *= volSpread;
 
+
+
     vec3 finalPos;
+
     if(uPhase <= 1.0) {
+
         finalPos = mix(icePos, mtnPos, uPhase);
+
     } else {
+
         finalPos = mix(mtnPos, volPos, uPhase - 1.0);
+
     }
 
+
+
     vElevation = finalPos.y;
+
     gl_Position = projectionMatrix * modelViewMatrix * vec4(finalPos, 1.0);
-    }
-    `;
+
+  }
+
+`;
 
 const fragmentShader = `
   uniform float uTime;
