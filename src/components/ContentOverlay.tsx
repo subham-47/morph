@@ -1,6 +1,11 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
-const TOPICS = [
+// Strict TypeScript Interfaces to prevent build errors
+interface Topic { id: string; icon: string; name: string; desc: string; count: string; status: string; }
+interface Exam { icon: string; name: string; full: string; details: Record<string, string>; }
+interface Mineral { name: string; formula: string; hardness: string; lustre: string; cleavage: string; sg: string; colorHex: string; }
+
+const TOPICS: Topic[] = [
   { id: 'mineralogy', icon: '💎', name: 'Mineralogy', desc: 'Crystal systems, physical & optical properties, silicate classification', count: '48 subtopics', status: 'Active' },
   { id: 'petrology', icon: '🪨', name: 'Petrology', desc: 'Igneous, sedimentary and metamorphic rocks — classification & textures', count: '52 subtopics', status: 'Active' },
   { id: 'structural', icon: '🌋', name: 'Structural Geology', desc: 'Folds, faults, joints, plate tectonics and geologic structures', count: '38 subtopics', status: 'Active' },
@@ -11,14 +16,14 @@ const TOPICS = [
   { id: 'remote_sensing', icon: '🛰️', name: 'Remote Sensing & GIS', desc: 'Satellite imagery, image interpretation, GIS for geologists', count: '16 subtopics', status: 'Coming Soon' },
 ];
 
-const EXAMS = [
+const EXAMS: Exam[] = [
   { icon: '🎯', name: 'GATE Geology', full: 'Graduate Aptitude Test in Engineering', details: { Body: 'IITs', Freq: 'Annual (Feb)', Marks: '100 (65 Q)', Use: 'M.Tech, PSU jobs' } },
   { icon: '📘', name: 'IIT JAM Geology', full: 'Joint Admission Test for M.Sc.', details: { Body: 'IITs', Freq: 'Annual (Feb)', Marks: '100 (60 Q)', Use: 'M.Sc Admission' } },
   { icon: '🏛️', name: 'GSI Geologist', full: 'Geological Survey of India', details: { Body: 'UPSC', Freq: 'Annual', Stages: 'Written + Interview', Qual: 'M.Sc Geology' } },
   { icon: '🛢️', name: 'ONGC Geologist', full: 'Oil & Natural Gas Corporation', details: { Recruit: 'GATE Score', Qual: 'M.Sc Geology', Grade: 'E1', Sector: 'Oil exploration' } },
 ];
 
-const MINERALS = [
+const MINERALS: Mineral[] = [
   { name: 'Quartz', formula: 'SiO₂', hardness: '7', lustre: 'Vitreous', cleavage: 'None', sg: '2.65', colorHex: '#d4e5ff' },
   { name: 'Orthoclase', formula: 'KAlSi₃O₈', hardness: '6', lustre: 'Vitreous', cleavage: '2 dir @ 90°', sg: '2.56', colorHex: '#f0e0c0' },
   { name: 'Olivine', formula: '(Mg,Fe)₂SiO₄', hardness: '6.5', lustre: 'Vitreous', cleavage: 'Imperfect', sg: '3.27–4.37', colorHex: '#80a050' },
@@ -27,8 +32,8 @@ const MINERALS = [
   { name: 'Magnetite', formula: 'Fe₃O₄', hardness: '6', lustre: 'Metallic', cleavage: 'None', sg: '5.18', colorHex: '#202020' },
 ];
 
-const ContentOverlay = () => {
-  const [examTab, setExamTab] = useState('profiles');
+export default function ContentOverlay() {
+  const [examTab, setExamTab] = useState<string>('profiles');
 
   return (
     <div className="w-full relative z-10">
@@ -134,6 +139,4 @@ const ContentOverlay = () => {
       </div>
     </div>
   );
-};
-
-export default ContentOverlay;
+}
