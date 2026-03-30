@@ -383,10 +383,20 @@ scene.add(trees);
     onPhaseUpdate(p);
 
     // --- 🌲 SMOOTH TREE FADE ---
-    if (p > 0.5 && p < 1.5) {
-      gsap.to(treeMaterial, { opacity: 1, duration: 0.5, overwrite: 'auto' });
+    // New logic: Stays until 1.7 (well into the lava phase)
+    if (p > 0.4) { 
+      if (p < 1.7) {
+        // Trees are healthy and visible
+        gsap.to(treeMaterial, { opacity: 1, duration: 0.4, overwrite: 'auto' });
+        treeMaterial.color.set(0x1f7a1f); // Reset to forest green
+      } else {
+        // Lava has arrived! Fade them out as they "burn"
+        gsap.to(treeMaterial, { opacity: 0, duration: 0.8, overwrite: 'auto' });
+        treeMaterial.color.set(0x221100); // Optional: Turn them charred brown/black before they vanish
+      }
     } else {
-      gsap.to(treeMaterial, { opacity: 0, duration: 0.5, overwrite: 'auto' });
+      // Ice phase: Trees haven't grown yet
+      gsap.to(treeMaterial, { opacity: 0, duration: 0.3, overwrite: 'auto' });
     }
     water.visible = p < 0.8;
     water.material.opacity = Math.max(0, 1 - p * 0.8);
