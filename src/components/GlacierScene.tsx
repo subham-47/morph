@@ -283,36 +283,39 @@ scene.add(trees);
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particlesMesh);
 
-    // --- 🌋 LAVA FOUNTAIN SETUP ---
+    // --- 🌋 SCROLL-DRIVEN LAVA FOUNTAIN SETUP ---
     const fountainCount = 800;
     const fountainGeometry = new THREE.BufferGeometry();
     const fountainPositions = new Float32Array(fountainCount * 3);
-    const fountainVelocities = new Float32Array(fountainCount * 3);
+    const fountainParams = new Float32Array(fountainCount * 4); // Stores: [angle, spread, jumpHeight, timeOffset]
 
     for (let i = 0; i < fountainCount; i++) {
-      fountainPositions[i * 3 + 0] = 0; // x
-      fountainPositions[i * 3 + 1] = 1.3; // y (crater height)
-      fountainPositions[i * 3 + 2] = 0; // z
+      // Define the fixed parabolic path for each particle
+      fountainParams[i * 4 + 0] = Math.random() * Math.PI * 2; // Random angle (0 to 360deg)
+      fountainParams[i * 4 + 1] = Math.random() * 1.5; // Spread distance outward
+      fountainParams[i * 4 + 2] = Math.random() * 2.0 + 1.5; // Upward jump height
+      fountainParams[i * 4 + 3] = Math.random(); // Phase offset so they don't jump at the exact same time
 
-      fountainVelocities[i * 3 + 0] = (Math.random() - 0.5) * 0.08; // x-spread
-      fountainVelocities[i * 3 + 1] = Math.random() * 0.15 + 0.1; // y-upward shoot
-      fountainVelocities[i * 3 + 2] = (Math.random() - 0.5) * 0.08; // z-spread
+      fountainPositions[i * 3 + 0] = 0;
+      fountainPositions[i * 3 + 1] = 1.3;
+      fountainPositions[i * 3 + 2] = 0;
     }
 
     fountainGeometry.setAttribute('position', new THREE.BufferAttribute(fountainPositions, 3));
+    fountainGeometry.setAttribute('aParams', new THREE.BufferAttribute(fountainParams, 4));
 
     const fountainMaterial = new THREE.PointsMaterial({
       size: 0.04,
-      color: 0xff4400, // Bright orange
+      color: 0xff4400,
       transparent: true,
       blending: THREE.AdditiveBlending,
       depthWrite: false,
     });
 
     const fountainParticles = new THREE.Points(fountainGeometry, fountainMaterial);
-    fountainParticles.visible = false; // Hide it initially
+    fountainParticles.visible = false;
     scene.add(fountainParticles);
-    // --- END FOUNTAIN SETUP ---
+    // --- END SCROLL-DRIVEN FOUNTAIN SETUP ---
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
