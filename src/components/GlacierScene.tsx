@@ -185,6 +185,10 @@ export const GlacierScene: React.FC<GlacierSceneProps> = ({ onPhaseUpdate }) => 
   useEffect(() => {
     if (!canvasRef.current) return;
 
+    // 👇 PASTE THESE TWO LINES RIGHT HERE 👇
+    let targetFountainTime = 0;
+    let currentFountainTime = 0;
+
     const renderer = new THREE.WebGLRenderer({
   canvas: canvasRef.current,
   antialias: true,
