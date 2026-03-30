@@ -481,9 +481,9 @@ scene.add(water);
     if (fountainParticles) {
       fountainParticles.visible = p > 1.2;
       fountainMaterial.opacity = Math.max(0, Math.min(1, (p - 1.2) * 2));
-    }
-    }
-  });
+   }
+      } // 👈 THIS CLOSES the onUpdate: (self) => { function
+    }); // 👈 THIS CLOSES the ScrollTrigger.create({ setup
 
 
   const animate = () => {
