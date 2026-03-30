@@ -265,7 +265,7 @@ water.position.y = -1.5;
 
 scene.add(water);
 
-    // 🌲 Trees (instanced with position tracking)
+    // --- 🌲 TREES (SETUP WITH DYNAMIC TRACKING) ---
     const treeCount = 200;
     const treeAngles = new Float32Array(treeCount);
     const treeRadii = new Float32Array(treeCount);
@@ -282,20 +282,20 @@ scene.add(water);
     const dummy = new THREE.Object3D();
 
     for (let i = 0; i < treeCount; i++) {
-      // Save these so we can "push" the trees out later
       treeAngles[i] = Math.random() * Math.PI * 2;
-      treeRadii[i] = 1.4 + Math.random() * 0.8;
+      treeRadii[i] = 1.4 + Math.random() * 0.8; // Base distance from center
 
       const x = Math.cos(treeAngles[i]) * treeRadii[i];
       const z = Math.sin(treeAngles[i]) * treeRadii[i];
       const y = -0.2;
 
       dummy.position.set(x, y, z);
+      dummy.rotation.set(0, -treeAngles[i], 0);
       dummy.updateMatrix();
       trees.setMatrixAt(i, dummy.matrix);
     }
-
     scene.add(trees);
+    // --- END TREE SETUP ---
 
     // Particles
     const particlesCount = 1000;
@@ -393,10 +393,7 @@ scene.add(water);
         
         const x = Math.cos(angle) * r;
         const z = Math.sin(angle) * r;
-        
-        // NEW MATH: Lifts the trees up a curved path so they stay on top of the slope
-        const heightLift = Math.pow(Math.max(0, p - 0.4), 0.8) * 0.5;
-        const y = -0.2 + heightLift; 
+        const y = -0.2 + (p * 0.4); // Lift them up higher as it grows 
 
         dummy.position.set(x, y, z);
         // Tilt trees slightly away from center so they sit on the slope
@@ -409,7 +406,7 @@ scene.add(water);
       // GSAP Fade Logic
       if (p < 1.6) {
         // Healthy Forest
-        gsap.to(treeMaterial, { opacity: 1, duration: 0.3, overwrite: 'auto' });
+        gsap.to(treeMaterial, { opacity: 1, duration: 0.2, overwrite: 'auto' });
         treeMaterial.color.set(0x1f7a1f); 
       } else {
         // Volcanic Scorching - Fade them out as lava arrives
@@ -418,7 +415,7 @@ scene.add(water);
       }
     } else {
       // FORCE INVISIBLE: This fixes the "black trees during ice phase" bug
-      gsap.to(treeMaterial, { opacity: 0, duration: 0.2, overwrite: 'auto' });
+      gsap.to(treeMaterial, { opacity: 0, duration: 0.1, overwrite: 'auto' });
     }
 
     // 3. Environment Elements
