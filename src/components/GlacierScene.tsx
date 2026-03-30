@@ -383,7 +383,7 @@ scene.add(water);
 
     // --- 🌲 SYNCHRONIZED TREE GROWTH & SMOOTH FADE ---
     // REDUCED SPREAD: Changed from 2.5 to 0.95 so they stick to the mountain slopes!
-    const spreadMultiplier = 1.0 + (Math.max(0, p - 0.4) * 0.65); 
+    const spreadMultiplier = 1.0 + (Math.max(0, p - 0.4) * 0.6); 
 
     if (p > 0.35) { 
       // 1. Update Tree Positions
