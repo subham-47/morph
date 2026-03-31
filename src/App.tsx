@@ -46,14 +46,23 @@ const phases = [
 
 export default function App() {
   const [phase, setPhase] = React.useState(0);
+  
+  // --- SEARCH STATE & LOGIC ---
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsSearchOpen(false);
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
 
   return (
     <div className="relative bg-[#020617] text-slate-50 min-h-screen selection:bg-blue-500/30">
       <GlacierScene onPhaseUpdate={setPhase} />
-      
-      {/* ----------------------------------------- */}
-      {/* --- TOP NAVIGATION (Mega Menu Update) --- */}
-      {/* ----------------------------------------- */}
+
+      {/* --- TOP NAVIGATION (Mega Menu) --- */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl pointer-events-auto">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           
@@ -68,7 +77,7 @@ export default function App() {
           {/* Desktop Links & Mega Menus */}
           <div className="hidden md:flex items-center gap-8">
             
-            {/* 1. Topic Library (Mega Menu) */}
+            {/* 1. Topic Library */}
             <div className="relative group">
               <button 
                 onClick={() => {
@@ -79,8 +88,6 @@ export default function App() {
               >
                 📚 Topic Library <span className="text-[10px] opacity-50 group-hover:rotate-180 transition-transform">▼</span>
               </button>
-              
-              {/* Dropdown Panel */}
               <div className="absolute top-[100%] left-1/2 -translate-x-1/2 w-[600px] invisible opacity-0 translate-y-4 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-slate-950 border border-white/10 rounded-xl p-6 shadow-[0_24px_80px_rgba(0,0,0,0.8)] grid grid-cols-2 gap-8">
                 <div>
                   <h4 className="text-[10px] font-mono text-blue-500 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Foundational</h4>
@@ -123,7 +130,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* 2. Quiz Hub (Small Dropdown) */}
+            {/* 2. Quiz Hub */}
             <div className="relative group">
               <button className="flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-blue-400 transition-colors py-4">
                 🧠 Quiz Hub <span className="text-[10px] opacity-50 group-hover:rotate-180 transition-transform">▼</span>
@@ -147,7 +154,7 @@ export default function App() {
               </div>
             </div>
 
-            {/* 3. Exam Corner (Direct Link) */}
+            {/* 3. Exam Corner */}
             <button 
               onClick={() => {
                 const el = document.getElementById('exams');
@@ -158,7 +165,7 @@ export default function App() {
               📋 Exam Corner
             </button>
 
-            {/* 4. Glacier Lab (Direct Link) */}
+            {/* 4. Glacier Lab */}
             <button 
               onClick={() => {
                 const el = document.getElementById('minerals');
@@ -171,9 +178,12 @@ export default function App() {
 
           </div>
 
-          {/* Right Actions */}
+          {/* Right Actions (Search & Quiz) */}
           <div className="flex items-center gap-5">
-            <button className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-blue-400 hover:border-blue-500/50 transition-all">
+            <button 
+              onClick={() => setIsSearchOpen(true)}
+              className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-blue-400 hover:border-blue-500/50 transition-all"
+            >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </button>
             <button className="hidden md:flex bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-600 hover:to-blue-400 text-white px-5 py-2.5 rounded-lg text-xs font-bold transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] hover:-translate-y-0.5">
@@ -289,12 +299,52 @@ export default function App() {
 
       </div>
 
-      {/* --- FIXED UI --- */}
-      {/* Scroll Indicator (Kept this so users know to scroll!) */}
+      {/* --- FIXED UI: SCROLL INDICATOR --- */}
       <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 pointer-events-none opacity-50">
         <span className="font-mono text-[8px] uppercase tracking-[0.5em] text-slate-500">Scroll to evolve</span>
         <div className="w-[1px] h-12 bg-gradient-to-b from-blue-500 to-transparent animate-pulse" />
       </div>
+
+      {/* --- FULL-SCREEN SEARCH OVERLAY --- */}
+      {isSearchOpen && (
+        <div className="fixed inset-0 z-[100] bg-[#020617]/95 backdrop-blur-xl flex flex-col items-center pt-32 px-6 animate-in fade-in duration-200">
+          <div className="w-full max-w-2xl">
+            
+            {/* The Input Box */}
+            <div className="flex items-center gap-4 bg-slate-900/50 border border-white/10 rounded-2xl p-4 shadow-2xl">
+              <svg className="w-6 h-6 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input
+                type="text"
+                autoFocus
+                placeholder="Search minerals, topics, PYQs, exam info..."
+                className="flex-1 bg-transparent border-none text-xl text-white outline-none placeholder:text-slate-600"
+              />
+              <button
+                onClick={() => setIsSearchOpen(false)}
+                className="p-2 text-slate-400 hover:text-white transition-colors rounded-lg hover:bg-white/5"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <p className="text-center text-slate-500 text-xs font-mono uppercase tracking-widest mt-6">
+              Press ESC to close
+            </p>
+            
+            {/* Quick Links / Popular Searches */}
+            <div className="mt-12">
+               <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-4 border-b border-white/5 pb-2">Popular Searches</h4>
+               <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 cursor-pointer hover:bg-blue-500/20 hover:border-blue-500/50 hover:text-blue-400 transition-all">GATE 2026 Syllabus</span>
+                  <span className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 cursor-pointer hover:bg-blue-500/20 hover:border-blue-500/50 hover:text-blue-400 transition-all">Quartz Properties</span>
+                  <span className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 cursor-pointer hover:bg-blue-500/20 hover:border-blue-500/50 hover:text-blue-400 transition-all">Bowen's Reaction Series</span>
+                  <span className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-sm text-slate-300 cursor-pointer hover:bg-blue-500/20 hover:border-blue-500/50 hover:text-blue-400 transition-all">IIT JAM PYQs</span>
+               </div>
+            </div>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
