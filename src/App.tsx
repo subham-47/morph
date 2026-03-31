@@ -1,9 +1,11 @@
 import React from 'react';
+import { Routes, Route } from 'react-router-dom';
 import GlacierScene from './components/GlacierScene';
 import ContentOverlay from './components/ContentOverlay';
 import { motion } from 'motion/react';
 import { Mountain, Wind, Flame, Layers, Globe, Zap } from 'lucide-react';
 import { cn } from './lib/utils';
+import QuizTopics from './pages/QuizTopics';
 
 const phases = [
   {
