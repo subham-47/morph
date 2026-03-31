@@ -409,8 +409,8 @@ scene.add(water);
         // 2. The whole forest lifts up as the mountain grows
         const growthHeight = Math.max(0, p - 0.4) * 0.4; 
         
-        // 3. Combine them and shift down slightly to hug the rock
-        const y = -0.9 + slopeHeight + growthHeight; 
+        // 3. LIFTED THE BASE HEIGHT
+        const y = -0.1 + slopeHeight + growthHeight; 
 
             dummy.position.set(x, y, z);
             dummy.rotation.set(0, -angle, 0); 
