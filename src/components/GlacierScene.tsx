@@ -364,15 +364,15 @@ scene.add(water);
     const clock = new THREE.Clock();
     
     // --- 🎨 TREE COLOR STATES ---
-const colorGreen = new THREE.Color(0x1f7a1f);      // original lush green
-// Burnt rust / dried lava rock – earthy brown-orange
-const colorYellow = new THREE.Color(0xaa5533);    // 170,85,51 – natural transition
-const colorBlack = new THREE.Color(0x110500);     // Burnt ash (unchanged)
+    const colorGreen = new THREE.Color(0x1f7a1f);      // original lush green
+    // Natural scorched wood – a very dark, dry, dead brown
+    const colorYellow = new THREE.Color(0x4a3219);    
+    const colorBlack = new THREE.Color(0x110500);     // Burnt ash (unchanged)
 
-const emissiveGreen = new THREE.Color(0x051105);  // subtle green glow (unchanged)
-// Dull, smoldering glow for the rust stage
-const emissiveYellow = new THREE.Color(0x441100); // dark red-brown emission
-const emissiveBlack = new THREE.Color(0x000000);  // Dead ash (unchanged)
+    const emissiveGreen = new THREE.Color(0x051105);  // subtle green glow (unchanged)
+    // Barely-there smolder – removes the "glowing fire" look entirely
+    const emissiveYellow = new THREE.Color(0x110500); 
+    const emissiveBlack = new THREE.Color(0x000000);  // Dead ash (unchanged)
 
     // ... your trigger setup ...
 
