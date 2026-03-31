@@ -53,6 +53,17 @@ function App() {
   // --- SEARCH STATE & LOGIC ---
   const [isSearchOpen, setIsSearchOpen] = React.useState(false);
 
+  // --- THEME STATE & LOGIC ---
+  const [isDarkMode, setIsDarkMode] = React.useState(true); // Default to dark
+
+  React.useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
   React.useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setIsSearchOpen(false);
