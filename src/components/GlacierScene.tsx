@@ -375,15 +375,26 @@ scene.add(water);
     const particlesCount = 1000;
     const particlesGeometry = new THREE.BufferGeometry();
     const posArray = new Float32Array(particlesCount * 3);
+    const randomArray = new Float32Array(particlesCount * 3); // 👈 Added for the shader!
+    
     for (let i = 0; i < particlesCount * 3; i++) {
       posArray[i] = (Math.random() - 0.5) * 15;
+      randomArray[i] = Math.random(); 
     }
+    
     particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-    const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.02,
-      color: 0xffffff,
+    particlesGeometry.setAttribute('aRandom', new THREE.BufferAttribute(randomArray, 3));
+    
+    // 👻 The Ghost is alive! Now using your custom GLSL
+    const particlesMaterial = new THREE.ShaderMaterial({
+      vertexShader: particleVertexShader,
+      fragmentShader: particleFragmentShader,
+      uniforms: {
+        uTime: material.uniforms.uTime,     // Shares time with the main mountain
+        uPhase: material.uniforms.uPhase,   // Shares scroll phase
+      },
       transparent: true,
-      opacity: 0.5,
+      depthWrite: false, 
     });
     const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particlesMesh);
