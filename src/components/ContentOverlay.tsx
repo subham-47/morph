@@ -163,7 +163,7 @@ export default function ContentOverlay() {
       {/* ----------------------------- */}
       {/* COMPACT & TRANSPARENT FOOTER */}
       {/* ----------------------------- */}
-      <footer className="w-full border-t border-white/10 bg-black/40 backdrop-blur-md pointer-events-auto mt-10">
+      <footer id="contact" className="w-full border-t border-white/10 bg-black/40 backdrop-blur-md pointer-events-auto mt-10">
         <div className="max-w-7xl mx-auto px-6 py-10">
           
           {/* Top Grid Area */}
