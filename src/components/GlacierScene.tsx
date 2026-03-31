@@ -405,13 +405,13 @@ scene.add(water);
             
             // --- THE SLOPE FIX ---
         // 1. Trees closer to the center (smaller 'r') get pushed higher up
-        const slopeHeight = (2.2 - r) * 1.2; 
+        const slopeHeight = (2.2 - r) * 1.6; 
         
         // 2. The whole forest lifts up as the mountain grows
         const growthHeight = Math.max(0, p - 0.4) * 0.4; 
         
         // 3. LIFTED THE BASE HEIGHT
-        const y = -0.7 + slopeHeight + growthHeight; 
+        const y = -0.9 + slopeHeight + growthHeight; 
 
             dummy.position.set(x, y, z);
             dummy.rotation.set(0, -angle, 0); 
