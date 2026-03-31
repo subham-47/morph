@@ -6,6 +6,7 @@ import { motion } from 'motion/react';
 import { Mountain, Wind, Flame, Layers, Globe, Zap } from 'lucide-react';
 import { cn } from './lib/utils';
 import QuizTopics from './pages/QuizTopics';
+import QuizPage from './pages/QuizPage';
 
 const phases = [
   {
@@ -361,6 +362,7 @@ export default function Root() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/quiz" element={<QuizTopics />} />
+<Route path="/quiz/:topicId" element={<QuizPage />} />
     </Routes>
   );
 }
