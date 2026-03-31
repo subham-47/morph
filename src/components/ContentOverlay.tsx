@@ -130,24 +130,31 @@ export default function ContentOverlay() {
               </p>
               <h2 className="text-4xl font-light tracking-wide">Mineral <span className="text-blue-300 font-bold italic">Database</span></h2>
             </div>
-            <button className="text-sm font-medium text-slate-400 hover:text-white transition-colors border-b border-slate-700 hover:border-white pb-1">
+            
+            {/* 👇 FIX 1: The onClick is added here so the button works */}
+            <button 
+              onClick={() => alert("This will link to your full Lab page!")} 
+              className="text-sm font-medium text-slate-400 hover:text-white transition-colors border-b border-slate-700 hover:border-white pb-1"
+            >
               Open Full Lab &rarr;
             </button>
           </div>
 
-          {/* Smaller, sleeker cards that don't overwhelm the screen */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {/* 👇 FIX 2: Added 'items-start' to the end of this className */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-start">
             {MINERALS.slice(0, 6).map((min) => (
-              <div key={min.name} className="relative group overflow-hidden rounded-xl border border-white/5 bg-black/20 backdrop-blur-sm cursor-pointer hover:border-white/20 transition-all">
-                {/* Thin color accent at the top */}
+              
+              {/* 👇 FIX 3: Added 'h-fit' right at the beginning of this className */}
+              <div key={min.name} className="h-fit relative group overflow-hidden rounded-xl border border-white/5 bg-black/20 backdrop-blur-sm cursor-pointer hover:border-white/20 transition-all">
+                
                 <div className="absolute top-0 left-0 right-0 h-1 opacity-50 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: min.colorHex }}></div>
                 
                 <div className="p-5 text-center">
                   <h3 className="text-lg font-bold mb-1 text-slate-200">{min.name}</h3>
                   <p className="text-xs font-mono text-slate-500 group-hover:text-blue-400 transition-colors">{min.formula}</p>
                   
-                  {/* Hover reveal for the intense data (keeps it clean initially!) */}
-                  <div className="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 group-hover:mt-4 transition-all duration-300 overflow-hidden text-[10px] text-slate-400 space-y-1">
+                  {/* 👇 FIX 4: Changed h-0/h-auto to max-h-0/max-h-24 for smooth sliding */}
+                  <div className="max-h-0 opacity-0 group-hover:max-h-24 group-hover:opacity-100 group-hover:mt-4 transition-all duration-300 overflow-hidden text-[10px] text-slate-400 space-y-1">
                     <p>Hardness: <span className="text-white">{min.hardness}</span></p>
                     <p>SG: <span className="text-white">{min.sg}</span></p>
                   </div>
