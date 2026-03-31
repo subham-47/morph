@@ -55,8 +55,8 @@ export default function App() {
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6 md:px-12 pointer-events-auto">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-blue-500 rounded-lg rotate-45 flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <div className="w-4 h-4 bg-[#020617] rounded-sm -rotate-45" />
+            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(37,99,235,0.5)]">
+              <span className="text-white font-bold text-lg">G</span>
             </div>
             <span className="font-display font-bold text-lg tracking-wider uppercase">GeoGlacier</span>
           </div>
@@ -119,7 +119,7 @@ export default function App() {
         ))}
 
         {/* Features Section */}
-        <section id="research" className="min-h-screen py-32 px-6 md:px-12">
+        <section id="research" className="min-h-screen py-32 px-6 md:px-12 pointer-events-auto">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-24">
               <motion.span 
@@ -159,9 +159,10 @@ export default function App() {
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="max-w-xl p-8 md:p-12 bg-slate-900/10 border border-white/10 rounded-3xl shadow-2xl"
+                key={i}
+                className="max-w-xl p-8 md:p-12 bg-slate-900/10 border border-white/10 rounded-3xl shadow-2xl transition-transform hover:-translate-y-2"
               >
-                  <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
                     <feature.icon className="w-6 h-6 text-blue-400" />
                   </div>
                   <h3 className="font-display text-xl font-bold mb-3">{feature.title}</h3>
@@ -171,52 +172,12 @@ export default function App() {
             </div>
           </div>
         </section>
+        
+        {/* All the content and the NEW footer will come from here now */}
         <ContentOverlay />
-
-        {/* Footer */}
-        <footer className="bg-transparent backdrop-blur-md py-24 px-6 md:px-12 border-t border-white/10">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-500 rounded-lg rotate-45 flex items-center justify-center">
-                <div className="w-4 h-4 bg-slate-950 rounded-sm -rotate-45" />
-              </div>
-              <span className="font-display font-bold text-lg tracking-wider uppercase">GeoGlacier</span>
-            </div>
-            
-            <div className="flex gap-12">
-              <div className="flex flex-col gap-4">
-                <span className="font-mono text-[9px] uppercase tracking-widest text-slate-500">Navigation</span>
-                <div className="flex flex-col gap-2">
-                  {['Home', 'Research', 'Evolution', 'Contact'].map(item => (
-                    <a key={item} href="#" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">{item}</a>
-                  ))}
-                </div>
-              </div>
-              <div className="flex flex-col gap-4">
-                <span className="font-mono text-[9px] uppercase tracking-widest text-slate-500">Legal</span>
-                <div className="flex flex-col gap-2">
-                  {['Privacy', 'Terms', 'Security'].map(item => (
-                    <a key={item} href="#" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">{item}</a>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="text-center md:text-right">
-              <p className="text-slate-500 text-sm mb-4">© 2026 GeoGlacier. All rights reserved.</p>
-              <div className="flex justify-center md:justify-end gap-4">
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-500/20 transition-colors cursor-pointer">
-                  <Globe className="w-4 h-4 text-slate-400" />
-                </div>
-                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-500/20 transition-colors cursor-pointer">
-                  <Zap className="w-4 h-4 text-slate-400" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </footer>
       </div>
 
+      {/* Fixed UI Overlays */}
       {/* Scroll Indicator */}
       <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 pointer-events-none opacity-50">
         <span className="font-mono text-[8px] uppercase tracking-[0.5em] text-slate-500">Scroll to evolve</span>
