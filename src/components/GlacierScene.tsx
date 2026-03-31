@@ -402,7 +402,15 @@ scene.add(water);
             const r = treeRadii[i] * spreadMultiplier;
             const x = Math.cos(angle) * r;
             const z = Math.sin(angle) * r;
-            const y = -0.2 + (Math.max(0, p - 0.4) * 0.25); 
+            // --- THE SLOPE FIX ---
+        // 1. Trees closer to the center (smaller 'r') get pushed higher up
+        const slopeHeight = (2.2 - r) * 0.9; 
+        
+        // 2. The whole forest lifts up as the mountain grows
+        const growthHeight = Math.max(0, p - 0.4) * 0.4; 
+        
+        // 3. Combine them and shift down slightly to hug the rock
+        const y = -0.9 + slopeHeight + growthHeight; 
 
             dummy.position.set(x, y, z);
             dummy.rotation.set(0, -angle, 0); 
