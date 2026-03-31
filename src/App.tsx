@@ -62,7 +62,7 @@ export default function App() {
     <div className="relative bg-[#020617] text-slate-50 min-h-screen selection:bg-blue-500/30">
       <GlacierScene onPhaseUpdate={setPhase} />
 
-      {/* --- TOP NAVIGATION (Mega Menu) --- */}
+      {/* --- TOP NAVIGATION (Original Fonts Restored) --- */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-[#020617]/80 backdrop-blur-xl pointer-events-auto">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           
@@ -84,11 +84,11 @@ export default function App() {
                   const el = document.getElementById('topics');
                   el && window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
                 }}
-                className="flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-blue-400 transition-colors py-4"
+                className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors py-4"
               >
-                📚 Topic Library <span className="text-[10px] opacity-50 group-hover:rotate-180 transition-transform">▼</span>
+                Topic Library <span className="text-[8px] opacity-50 group-hover:rotate-180 transition-transform">▼</span>
               </button>
-              <div className="absolute top-[100%] left-1/2 -translate-x-1/2 w-[600px] invisible opacity-0 translate-y-4 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-slate-950 border border-white/10 rounded-xl p-6 shadow-[0_24px_80px_rgba(0,0,0,0.8)] grid grid-cols-2 gap-8">
+              <div className="absolute top-[100%] left-1/2 -translate-x-1/2 w-[600px] invisible opacity-0 translate-y-4 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-slate-950 border border-white/10 rounded-xl p-6 shadow-[0_24px_80px_rgba(0,0,0,0.8)] grid grid-cols-2 gap-8 text-left normal-case tracking-normal">
                 <div>
                   <h4 className="text-[10px] font-mono text-blue-500 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Foundational</h4>
                   <div className="space-y-4">
@@ -132,10 +132,10 @@ export default function App() {
 
             {/* 2. Quiz Hub */}
             <div className="relative group">
-              <button className="flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-blue-400 transition-colors py-4">
-                🧠 Quiz Hub <span className="text-[10px] opacity-50 group-hover:rotate-180 transition-transform">▼</span>
+              <button className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors py-4">
+                Quiz Hub <span className="text-[8px] opacity-50 group-hover:rotate-180 transition-transform">▼</span>
               </button>
-              <div className="absolute top-[100%] left-1/2 -translate-x-1/2 w-[240px] invisible opacity-0 translate-y-4 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-slate-950 border border-white/10 rounded-xl p-4 shadow-[0_24px_80px_rgba(0,0,0,0.8)] space-y-2">
+              <div className="absolute top-[100%] left-1/2 -translate-x-1/2 w-[240px] invisible opacity-0 translate-y-4 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-slate-950 border border-white/10 rounded-xl p-4 shadow-[0_24px_80px_rgba(0,0,0,0.8)] space-y-2 text-left normal-case tracking-normal">
                 <div className="hover:bg-white/5 p-3 rounded-lg cursor-pointer transition-colors flex items-center gap-3">
                   <span>📝</span>
                   <div>
@@ -160,9 +160,9 @@ export default function App() {
                 const el = document.getElementById('exams');
                 el && window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
               }}
-              className="text-xs font-semibold text-slate-300 hover:text-blue-400 transition-colors py-4"
+              className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors py-4"
             >
-              📋 Exam Corner
+              Exam Corner
             </button>
 
             {/* 4. Glacier Lab */}
@@ -171,9 +171,9 @@ export default function App() {
                 const el = document.getElementById('minerals');
                 el && window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
               }}
-              className="text-xs font-semibold text-slate-300 hover:text-blue-400 transition-colors py-4"
+              className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors py-4"
             >
-              🔬 Glacier Lab
+              Glacier Lab
             </button>
 
           </div>
@@ -186,8 +186,8 @@ export default function App() {
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </button>
-            <button className="hidden md:flex bg-gradient-to-r from-blue-700 to-blue-500 hover:from-blue-600 hover:to-blue-400 text-white px-5 py-2.5 rounded-lg text-xs font-bold transition-all shadow-[0_0_15px_rgba(37,99,235,0.3)] hover:shadow-[0_0_25px_rgba(37,99,235,0.5)] hover:-translate-y-0.5">
-              Start Quiz →
+            <button className="hidden md:flex px-6 py-2 bg-blue-600/10 border border-blue-500/20 rounded-full text-[10px] font-mono uppercase tracking-widest hover:bg-blue-600/20 transition-all">
+              Start Quiz
             </button>
           </div>
 
