@@ -36,64 +36,65 @@ export default function ContentOverlay() {
   const [examTab, setExamTab] = useState<string>('profiles');
 
   return (
-    <div className="w-full relative z-10">
-      <div className="max-w-7xl mx-auto px-6 py-32 space-y-40 text-slate-50">
+    // Pointer-events-none allows scrolling the 3D scene, but we re-enable it on the content
+    <div className="w-full relative z-10 pointer-events-none">
+      <div className="max-w-6xl mx-auto px-6 py-32 space-y-48 text-slate-50">
         
-        {/* --- TOPIC LIBRARY --- */}
-        <section id="topics">
-          <div className="mb-12">
-            <p className="text-blue-400 tracking-[0.15em] text-sm uppercase font-bold mb-2 flex items-center gap-4">
-              <span className="w-8 h-[1px] bg-blue-400"></span> Topic Library
-            </p>
-            <h2 className="text-4xl md:text-5xl font-bold">Every branch of <span className="text-blue-300 italic">geology, structured.</span></h2>
+        {/* --- TOPIC LIBRARY (Sleek Minimal Grid, limited to 4) --- */}
+        <section id="topics" className="pointer-events-auto">
+          <div className="mb-10 flex justify-between items-end">
+            <div>
+              <p className="text-blue-400 tracking-[0.2em] text-xs uppercase font-bold mb-3 flex items-center gap-4">
+                <span className="w-8 h-[1px] bg-blue-400"></span> Library
+              </p>
+              <h2 className="text-4xl font-light tracking-wide">Branches of <span className="text-blue-300 font-bold italic">Geology</span></h2>
+            </div>
+            <button className="text-sm font-medium text-slate-400 hover:text-white transition-colors border-b border-slate-700 hover:border-white pb-1">
+              Explore All Topics &rarr;
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {TOPICS.map((topic) => (
-              <div key={topic.id} className="bg-slate-900/40 backdrop-blur-md border border-white/10 p-6 rounded-2xl hover:bg-slate-800/60 hover:-translate-y-1 transition-all duration-300 group cursor-pointer shadow-xl">
-                <div className="text-4xl mb-4">{topic.icon}</div>
-                <h3 className="text-xl font-bold mb-2 group-hover:text-blue-300 transition-colors">{topic.name}</h3>
-                <p className="text-sm text-slate-300 mb-6 leading-relaxed">{topic.desc}</p>
-                <div className="flex justify-between items-center mt-auto">
-                  <span className="text-xs font-mono text-blue-400">{topic.count}</span>
-                  <span className={`text-[10px] uppercase tracking-wider px-2 py-1 rounded-full ${topic.status === 'Active' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'}`}>
-                    {topic.status}
-                  </span>
-                </div>
+          {/* Ultra-minimal cards: No heavy backgrounds, just thin borders and subtle hover */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {TOPICS.slice(0, 4).map((topic) => ( // ONLY SHOW FIRST 4
+              <div key={topic.id} className="p-6 border-t border-white/10 hover:border-blue-400/50 hover:bg-white/[0.02] transition-all duration-300 group cursor-pointer">
+                <div className="text-3xl mb-4 opacity-70 group-hover:opacity-100 transition-opacity">{topic.icon}</div>
+                <h3 className="text-lg font-bold mb-2 group-hover:text-blue-300 transition-colors">{topic.name}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed line-clamp-2">{topic.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* --- EXAM CORNER --- */}
-        <section id="exams">
-          <div className="mb-12">
-            <p className="text-blue-400 tracking-[0.15em] text-sm uppercase font-bold mb-2 flex items-center gap-4">
-              <span className="w-8 h-[1px] bg-blue-400"></span> Exam Corner
+        {/* --- EXAM CORNER (Clean List Layout instead of Grid boxes) --- */}
+        <section id="exams" className="pointer-events-auto max-w-3xl">
+          <div className="mb-10">
+            <p className="text-blue-400 tracking-[0.2em] text-xs uppercase font-bold mb-3 flex items-center gap-4">
+              <span className="w-8 h-[1px] bg-blue-400"></span> Career
             </p>
-            <h2 className="text-4xl md:text-5xl font-bold">Every geology exam, <span className="text-blue-300 italic">one place.</span></h2>
+            <h2 className="text-4xl font-light tracking-wide">Target <span className="text-blue-300 font-bold italic">Exams</span></h2>
           </div>
 
-          <div className="flex gap-2 p-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl w-fit mb-8">
-            <button onClick={() => setExamTab('profiles')} className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${examTab === 'profiles' ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white'}`}>Exam Profiles</button>
-            <button onClick={() => setExamTab('notifications')} className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${examTab === 'notifications' ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white'}`}>🔔 Notifications</button>
-            <button onClick={() => setExamTab('pyq')} className={`px-6 py-2 rounded-lg text-sm font-medium transition-colors ${examTab === 'pyq' ? 'bg-white/10 text-white' : 'text-slate-400 hover:text-white'}`}>PYQ Archive</button>
+          <div className="flex gap-4 border-b border-white/10 pb-4 mb-6">
+            <button onClick={() => setExamTab('profiles')} className={`text-sm font-medium transition-colors ${examTab === 'profiles' ? 'text-white' : 'text-slate-500 hover:text-slate-300'}`}>Exam Profiles</button>
+            <button onClick={() => setExamTab('notifications')} className={`text-sm font-medium transition-colors ${examTab === 'notifications' ? 'text-white' : 'text-slate-500 hover:text-slate-300'}`}>Notifications</button>
           </div>
 
           {examTab === 'profiles' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="space-y-2">
               {EXAMS.map((exam) => (
-                <div key={exam.name} className="bg-slate-900/40 backdrop-blur-md border border-white/10 p-6 rounded-2xl hover:border-blue-400/50 transition-colors shadow-xl">
-                  <div className="text-3xl mb-4">{exam.icon}</div>
-                  <h3 className="text-lg font-bold mb-1">{exam.name}</h3>
-                  <p className="text-xs text-slate-400 mb-6 h-8">{exam.full}</p>
-                  <div className="space-y-3 pt-4 border-t border-white/10">
-                    {Object.entries(exam.details).map(([key, val]) => (
-                      <div key={key} className="flex justify-between text-xs">
-                        <span className="text-slate-400">{key}</span>
-                        <span className="font-semibold text-blue-200">{val}</span>
-                      </div>
-                    ))}
+                // Sleek horizontal rows instead of massive boxes
+                <div key={exam.name} className="group flex items-center justify-between p-4 hover:bg-white/[0.03] border border-transparent hover:border-white/5 rounded-xl transition-all cursor-pointer">
+                  <div className="flex items-center gap-4">
+                    <span className="text-2xl opacity-60 group-hover:opacity-100">{exam.icon}</span>
+                    <div>
+                      <h3 className="font-bold text-slate-200 group-hover:text-white">{exam.name}</h3>
+                      <p className="text-xs text-slate-500">{exam.full}</p>
+                    </div>
+                  </div>
+                  <div className="text-right hidden sm:block">
+                     {/* Just show one key piece of data to tease the user */}
+                    <span className="text-xs font-mono text-blue-400/70">{Object.values(exam.details)[0]}</span>
                   </div>
                 </div>
               ))}
@@ -101,34 +102,35 @@ export default function ContentOverlay() {
           )}
         </section>
 
-        {/* --- MINERAL DATABASE --- */}
-        <section id="minerals">
-           <div className="mb-12">
-            <p className="text-blue-400 tracking-[0.15em] text-sm uppercase font-bold mb-2 flex items-center gap-4">
-              <span className="w-8 h-[1px] bg-blue-400"></span> Glacier Lab
-            </p>
-            <h2 className="text-4xl md:text-5xl font-bold">Mineral <span className="text-blue-300 italic">ID Database.</span></h2>
+        {/* --- MINERAL DATABASE (Compact Bento Box) --- */}
+        <section id="minerals" className="pointer-events-auto">
+           <div className="mb-10 flex justify-between items-end">
+            <div>
+              <p className="text-blue-400 tracking-[0.2em] text-xs uppercase font-bold mb-3 flex items-center gap-4">
+                <span className="w-8 h-[1px] bg-blue-400"></span> Glacier Lab
+              </p>
+              <h2 className="text-4xl font-light tracking-wide">Mineral <span className="text-blue-300 font-bold italic">Database</span></h2>
+            </div>
+            <button className="text-sm font-medium text-slate-400 hover:text-white transition-colors border-b border-slate-700 hover:border-white pb-1">
+              Open Full Lab &rarr;
+            </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {MINERALS.map((min) => (
-              <div key={min.name} className="bg-slate-900/40 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-xl flex flex-col group hover:-translate-y-1 transition-transform">
-                <div className="h-2 w-full" style={{ backgroundColor: min.colorHex }}></div>
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold">{min.name}</h3>
-                      <p className="text-sm font-mono text-blue-400 mt-1">{min.formula}</p>
-                    </div>
-                    <div className="bg-white/5 px-3 py-1 rounded-lg border border-white/10 text-center">
-                      <span className="text-[10px] block text-slate-400 uppercase">Hardness</span>
-                      <span className="font-bold">{min.hardness}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2 text-sm pt-4 border-t border-white/10">
-                     <div className="flex justify-between"><span className="text-slate-400">Lustre</span><span>{min.lustre}</span></div>
-                     <div className="flex justify-between"><span className="text-slate-400">Cleavage</span><span>{min.cleavage}</span></div>
-                     <div className="flex justify-between"><span className="text-slate-400">Spec. Gravity</span><span>{min.sg}</span></div>
+          {/* Smaller, sleeker cards that don't overwhelm the screen */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {MINERALS.slice(0, 6).map((min) => (
+              <div key={min.name} className="relative group overflow-hidden rounded-xl border border-white/5 bg-black/20 backdrop-blur-sm cursor-pointer hover:border-white/20 transition-all">
+                {/* Thin color accent at the top */}
+                <div className="absolute top-0 left-0 right-0 h-1 opacity-50 group-hover:opacity-100 transition-opacity" style={{ backgroundColor: min.colorHex }}></div>
+                
+                <div className="p-5 text-center">
+                  <h3 className="text-lg font-bold mb-1 text-slate-200">{min.name}</h3>
+                  <p className="text-xs font-mono text-slate-500 group-hover:text-blue-400 transition-colors">{min.formula}</p>
+                  
+                  {/* Hover reveal for the intense data (keeps it clean initially!) */}
+                  <div className="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 group-hover:mt-4 transition-all duration-300 overflow-hidden text-[10px] text-slate-400 space-y-1">
+                    <p>Hardness: <span className="text-white">{min.hardness}</span></p>
+                    <p>SG: <span className="text-white">{min.sg}</span></p>
                   </div>
                 </div>
               </div>
