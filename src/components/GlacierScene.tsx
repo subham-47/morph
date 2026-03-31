@@ -405,7 +405,7 @@ scene.add(water);
             
             // --- THE SLOPE FIX ---
         // 1. Trees closer to the center (smaller 'r') get pushed higher up
-        const slopeHeight = (2.2 - r) * 2.8; 
+        const slopeHeight = (2.2 - r) * 1.2; 
         
         // 2. The whole forest lifts up as the mountain grows
         const growthHeight = Math.max(0, p - 0.4) * 0.4; 
