@@ -472,25 +472,42 @@ const emissiveBlack = new THREE.Color(0x000000);  // Dead ash (unchanged)
       particlesMaterial.opacity = 0.4 + Math.sin(elapsedTime * 5) * 0.2;
       particlesMesh.rotation.y = elapsedTime * 0.05;
 
+      // --- UPGRADE 3: LIQUID WATER RIPPLES ---
+      water.rotation.y = elapsedTime * 0.05;
+      const scale = 1.0 + Math.sin(elapsedTime * 2.0) * 0.02;
+      water.scale.set(scale, 1, scale); // Makes the water breathe/ripple
+      water.position.y = -1.5 + Math.sin(elapsedTime * 1.5) * 0.05;
+
+      particlesMaterial.opacity = 0.4 + Math.sin(elapsedTime * 5) * 0.2;
+      particlesMesh.rotation.y = elapsedTime * 0.05;
+      particlesMesh.position.y = Math.sin(elapsedTime * 0.2) * 0.5;
+
       // --- DYNAMIC WEATHER PARTICLES ---
       const pPositions = particlesGeometry.attributes.position.array as Float32Array;
       const currentPhase = material.uniforms.uPhase.value;
       
+      // 1. Set the color ONCE per frame (OUTSIDE THE LOOP)
+      if (currentPhase < 0.8) {
+        particlesMaterial.color.setHex(0xffffff); // White Snow
+      } else if (currentPhase > 1.2) {
+        particlesMaterial.color.setHex(0xff5500); // Glowing Orange Embers
+      } else {
+        particlesMaterial.color.setHex(0xaaddaa); // Soft Green Pollen
+      }
+
+      // 2. Move the particles physically (INSIDE THE LOOP)
       for (let i = 0; i < particlesCount; i++) {
         const i3 = i * 3;
         
         if (currentPhase < 0.8) {
           // ICE PHASE: Falling Snow
           pPositions[i3 + 1] -= deltaTime * (1.0 + Math.random());
-          particlesMaterial.color.setHex(0xffffff); // White
         } else if (currentPhase > 1.2) {
-          // VOLCANO PHASE: Rising Ash / Embers
+          // VOLCANO PHASE: Rising Embers
           pPositions[i3 + 1] += deltaTime * (2.0 + Math.random() * 2.0);
-          particlesMaterial.color.setHex(Math.random() > 0.5 ? 0xff4400 : 0x222222); // Orange and Ash
         } else {
           // MOUNTAIN PHASE: Gentle floating
           pPositions[i3 + 1] += Math.sin(elapsedTime * 2.0 + i) * 0.005;
-          particlesMaterial.color.setHex(0xaaddaa); // Soft green tint
         }
 
         // Loop particles when they go off screen
@@ -498,8 +515,6 @@ const emissiveBlack = new THREE.Color(0x000000);  // Dead ash (unchanged)
         if (pPositions[i3 + 1] > 5) pPositions[i3 + 1] = -5;
       }
       particlesGeometry.attributes.position.needsUpdate = true;
-      
-      particlesMesh.position.y = Math.sin(elapsedTime * 0.2) * 0.5;
 
       // ... fountain physics ...
       currentFountainTime += (targetFountainTime - currentFountainTime) * 0.05;
