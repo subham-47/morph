@@ -377,6 +377,43 @@ function App() {
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
+                className="max-w-xl p-8 md:p-12 bg-white/70 dark:bg-gradient-to-b dark:from-slate-900/30 dark:to-transparent backdrop-blur-md border border-white dark:border-white/10 rounded-3xl shadow-2xl transition-colors duration-500"
+              >
+                <span className={cn("font-mono text-[10px] uppercase tracking-[0.4em] mb-4 block", phase.color)}>
+                  {phase.tag}
+                </span>
+                <h2 className="font-display text-5xl md:text-7xl font-black leading-tight mb-6 text-slate-900 dark:text-white">
+                  {phase.title.split(' ').map((word, idx) => (
+                    <span key={idx} className={idx === 1 ? phase.color : ""}>
+                      {word}{' '}
+                    </span>
+                  ))}
+                </h2>
+                <p className="text-slate-600 dark:text-slate-400 text-sm md:text-base leading-relaxed mb-8">
+                  {phase.desc}
+                </p>
+                
+                <div className="flex gap-12">
+                  {phase.stats.map((stat) => (
+                    <div key={stat.label}>
+                      <div className={cn("font-display text-2xl font-bold mb-1", phase.color)}>{stat.value}</div>
+                      <div className="font-mono text-[9px] uppercase tracking-widest text-slate-500">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </section>
+          ))}
+        </div>
+          {phases.map((phase, i) => (
+            <section 
+              key={phase.id} 
+              className="h-screen flex items-center px-6 md:px-24 pointer-events-none"
+            >
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
                 className="max-w-xl p-8 md:p-12 bg-gradient-to-b from-slate-900/30 to-transparent backdrop-blur-md border border-white/10 rounded-3xl shadow-2xl"
               >
                 <span className={cn("font-mono text-[10px] uppercase tracking-[0.4em] mb-4 block", phase.color)}>
@@ -407,7 +444,59 @@ function App() {
         </div>
 
         {/* 2. Research Section */}
-        <section id="research" className="min-h-screen py-32 px-6 md:px-12 pointer-events-auto flex items-center">
+        <section id="research" className="min-h-screen py-32 px-6 md:px-12 pointer-events-auto flex items-center transition-colors duration-500">
+          <div className="max-w-7xl mx-auto w-full">
+            <div className="text-center mb-24">
+              <motion.span 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                className="font-mono text-[10px] uppercase tracking-[0.5em] text-blue-600 dark:text-blue-500 mb-4 block"
+              >
+                Scientific Capabilities
+              </motion.span>
+              <motion.h2 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                className="font-display text-4xl md:text-6xl font-bold mb-6 text-slate-900 dark:text-white"
+              >
+                Advanced <span className="text-blue-600 dark:text-blue-400">Geological</span> Analysis
+              </motion.h2>
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto"
+              >
+                Our platform integrates multi-spectral satellite data with real-time sensor networks to provide unprecedented insights into planetary evolution.
+              </motion.p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { icon: Wind, title: 'Atmospheric Dynamics', desc: 'Tracking gas emissions and particulate matter across volcanic plumes with global precision.' },
+                { icon: Layers, title: 'Stratigraphic Mapping', desc: 'High-resolution subsurface imaging revealing millions of years of geological deposition.' },
+                { icon: Zap, title: 'Seismic Monitoring', desc: 'Real-time detection of tectonic shifts using advanced machine learning algorithms.' },
+                { icon: Mountain, title: 'Topographic Evolution', desc: 'Monitoring erosion and uplift patterns to predict future landscape transformations.' },
+                { icon: Globe, title: 'Global Data Sync', desc: 'Seamless integration with international geological databases for collaborative research.' },
+                { icon: Flame, title: 'Thermal Analysis', desc: 'Infrared monitoring of geothermal hotspots and magma chamber dynamics.' },
+              ].map((feature, i) => (
+                <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                key={i}
+                className="max-w-xl p-8 md:p-12 bg-white dark:bg-slate-900/10 border border-slate-200 dark:border-white/10 rounded-3xl shadow-xl dark:shadow-2xl transition-transform hover:-translate-y-2"
+              >
+                  <div className="w-12 h-12 bg-blue-50 dark:bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
+                    <feature.icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <h3 className="font-display text-xl font-bold mb-3 text-slate-900 dark:text-white">{feature.title}</h3>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{feature.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
           <div className="max-w-7xl mx-auto w-full">
             <div className="text-center mb-24">
               <motion.span 
@@ -476,7 +565,44 @@ function App() {
 
       {/* --- FULL-SCREEN SEARCH OVERLAY --- */}
       {isSearchOpen && (
-        <div className="fixed inset-0 z-[100] bg-[#020617]/95 backdrop-blur-xl flex flex-col items-center pt-32 px-6 animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[100] bg-white/95 dark:bg-[#020617]/95 backdrop-blur-xl flex flex-col items-center pt-32 px-6 animate-in fade-in duration-200 transition-colors">
+          <div className="w-full max-w-2xl">
+            
+            {/* The Input Box */}
+            <div className="flex items-center gap-4 bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-2xl p-4 shadow-2xl">
+              <svg className="w-6 h-6 text-blue-500 dark:text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <input
+                type="text"
+                autoFocus
+                placeholder="Search minerals, topics, PYQs, exam info..."
+                className="flex-1 bg-transparent border-none text-xl text-slate-900 dark:text-white outline-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
+              />
+              <button
+                onClick={() => setIsSearchOpen(false)}
+                className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors rounded-lg hover:bg-black/5 dark:hover:bg-white/5"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <p className="text-center text-slate-400 dark:text-slate-500 text-xs font-mono uppercase tracking-widest mt-6">
+              Press ESC to close
+            </p>
+            
+            {/* Quick Links / Popular Searches */}
+            <div className="mt-12">
+               <h4 className="text-xs font-bold text-slate-500 dark:text-slate-600 uppercase tracking-wider mb-4 border-b border-slate-200 dark:border-white/5 pb-2">Popular Searches</h4>
+               <div className="flex flex-wrap gap-2">
+                  <span className="px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-sm text-slate-600 dark:text-slate-300 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-500/20 hover:border-blue-200 dark:hover:border-blue-500/50 hover:text-blue-600 dark:hover:text-blue-400 transition-all">GATE 2026 Syllabus</span>
+                  <span className="px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-sm text-slate-600 dark:text-slate-300 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-500/20 hover:border-blue-200 dark:hover:border-blue-500/50 hover:text-blue-600 dark:hover:text-blue-400 transition-all">Quartz Properties</span>
+                  <span className="px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-sm text-slate-600 dark:text-slate-300 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-500/20 hover:border-blue-200 dark:hover:border-blue-500/50 hover:text-blue-600 dark:hover:text-blue-400 transition-all">Bowen's Reaction Series</span>
+                  <span className="px-3 py-1.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-sm text-slate-600 dark:text-slate-300 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-500/20 hover:border-blue-200 dark:hover:border-blue-500/50 hover:text-blue-600 dark:hover:text-blue-400 transition-all">IIT JAM PYQs</span>
+               </div>
+            </div>
+
+          </div>
+        </div>
+      )}
           <div className="w-full max-w-2xl">
             
             {/* The Input Box */}
