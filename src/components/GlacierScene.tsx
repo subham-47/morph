@@ -558,59 +558,20 @@ scene.add(water);
 
     const animate = () => {
       const elapsedTime = clock.getElapsedTime();
-      const deltaTime = clock.getDelta();
-
+      
+      // Main Mountain Time Update
       material.uniforms.uTime.value = elapsedTime;
 
-      water.rotation.y = elapsedTime * 0.05;
-      water.position.y = -1.5 + Math.sin(elapsedTime * 1.5) * 0.05;
-
-      particlesMaterial.opacity = 0.4 + Math.sin(elapsedTime * 5) * 0.2;
-      particlesMesh.rotation.y = elapsedTime * 0.05;
-
-      // --- UPGRADE 3: LIQUID WATER RIPPLES ---
+      // --- LIQUID WATER RIPPLES ---
       water.rotation.y = elapsedTime * 0.05;
       const scale = 1.0 + Math.sin(elapsedTime * 2.0) * 0.02;
-      water.scale.set(scale, 1, scale); // Makes the water breathe/ripple
+      water.scale.set(scale, 1, scale); 
       water.position.y = -1.5 + Math.sin(elapsedTime * 1.5) * 0.05;
 
-      particlesMaterial.opacity = 0.4 + Math.sin(elapsedTime * 5) * 0.2;
+      // --- WEATHER PARTICLES (Now powered by ShaderMaterial!) ---
+      // We just rotate the entire particle system slowly for a nice 3D parallax effect.
+      // The GLSL vertex shader handles the complex drifting, falling, and rising.
       particlesMesh.rotation.y = elapsedTime * 0.05;
-      particlesMesh.position.y = Math.sin(elapsedTime * 0.2) * 0.5;
-
-      // --- DYNAMIC WEATHER PARTICLES ---
-      const pPositions = particlesGeometry.attributes.position.array as Float32Array;
-      const currentPhase = material.uniforms.uPhase.value;
-      
-      // 1. Set the color ONCE per frame (OUTSIDE THE LOOP)
-      if (currentPhase < 0.8) {
-        particlesMaterial.color.setHex(0xffffff); // White Snow
-      } else if (currentPhase > 1.2) {
-        particlesMaterial.color.setHex(0xff5500); // Glowing Orange Embers
-      } else {
-        particlesMaterial.color.setHex(0xaaddaa); // Soft Green Pollen
-      }
-
-      // 2. Move the particles physically (INSIDE THE LOOP)
-      for (let i = 0; i < particlesCount; i++) {
-        const i3 = i * 3;
-        
-        if (currentPhase < 0.8) {
-          // ICE PHASE: Falling Snow
-          pPositions[i3 + 1] -= deltaTime * (1.0 + Math.random());
-        } else if (currentPhase > 1.2) {
-          // VOLCANO PHASE: Rising Embers
-          pPositions[i3 + 1] += deltaTime * (2.0 + Math.random() * 2.0);
-        } else {
-          // MOUNTAIN PHASE: Gentle floating
-          pPositions[i3 + 1] += Math.sin(elapsedTime * 2.0 + i) * 0.005;
-        }
-
-        // Loop particles when they go off screen
-        if (pPositions[i3 + 1] < -5) pPositions[i3 + 1] = 5;
-        if (pPositions[i3 + 1] > 5) pPositions[i3 + 1] = -5;
-      }
-      particlesGeometry.attributes.position.needsUpdate = true;
 
       // ... fountain physics ...
       currentFountainTime += (targetFountainTime - currentFountainTime) * 0.05;
