@@ -459,66 +459,68 @@ const emissiveBlack = new THREE.Color(0x000000);  // Dead ash (unchanged)
     });
 
 
-  const animate = () => {
-  const elapsedTime = clock.getElapsedTime();
+  // We need to store the animation ID to cancel it later!
+    let animationFrameId: number;
 
-    // 👇 PASTE THIS ONE LINE RIGHT HERE 👇
-  const deltaTime = clock.getDelta();
+    const animate = () => {
+      const elapsedTime = clock.getElapsedTime();
+      const deltaTime = clock.getDelta();
 
-  material.uniforms.uTime.value = elapsedTime;
+      material.uniforms.uTime.value = elapsedTime;
 
-  water.rotation.y = elapsedTime * 0.05;
-  water.position.y = -1.5 + Math.sin(elapsedTime * 1.5) * 0.05;
+      water.rotation.y = elapsedTime * 0.05;
+      water.position.y = -1.5 + Math.sin(elapsedTime * 1.5) * 0.05;
 
-  particlesMaterial.opacity = 0.4 + Math.sin(elapsedTime * 5) * 0.2;
+      particlesMaterial.opacity = 0.4 + Math.sin(elapsedTime * 5) * 0.2;
+      particlesMesh.rotation.y = elapsedTime * 0.05;
+      particlesMesh.position.y = Math.sin(elapsedTime * 0.2) * 0.5;
 
-  particlesMesh.rotation.y = elapsedTime * 0.05;
-  particlesMesh.position.y = Math.sin(elapsedTime * 0.2) * 0.5;
+      // ... fountain physics ...
+      currentFountainTime += (targetFountainTime - currentFountainTime) * 0.05;
 
-    // --- 🌋 PERFECT SCROLL-SCRUBBED LAVA PHYSICS ---
-  // Smoothly catch up to the scroll position
-  currentFountainTime += (targetFountainTime - currentFountainTime) * 0.05;
+      if (fountainParticles && fountainParticles.visible) {
+        const positions = fountainGeometry.attributes.position.array as Float32Array;
+        const params = fountainGeometry.attributes.aParams.array as Float32Array;
+        const gravity = 3.5; 
 
-  if (fountainParticles && fountainParticles.visible) {
-    const positions = fountainGeometry.attributes.position.array as Float32Array;
-    const params = fountainGeometry.attributes.aParams.array as Float32Array;
-    
-    const gravity = 3.5; // Controls how fast it arcs downward
+        for (let i = 0; i < fountainCount; i++) {
+          const i3 = i * 3;
+          const i4 = i * 4;
+          const angle = params[i4 + 0];
+          const spread = params[i4 + 1];
+          const jumpHeight = params[i4 + 2];
+          const offset = params[i4 + 3];
 
-    for (let i = 0; i < fountainCount; i++) {
-      const i3 = i * 3;
-      const i4 = i * 4;
+          const localTime = (currentFountainTime + offset) % 1.0;
 
-      const angle = params[i4 + 0];
-      const spread = params[i4 + 1];
-      const jumpHeight = params[i4 + 2];
-      const offset = params[i4 + 3];
+          positions[i3 + 0] = Math.cos(angle) * spread * localTime;
+          positions[i3 + 1] = 1.3 + (jumpHeight * localTime) - (0.5 * gravity * localTime * localTime);
+          positions[i3 + 2] = Math.sin(angle) * spread * localTime;
+        }
+        fountainGeometry.attributes.position.needsUpdate = true;
+      }
 
-      // localTime loops from 0.0 to 1.0 based entirely on your scroll wheel!
-      const localTime = (currentFountainTime + offset) % 1.0;
+      renderer.render(scene, camera);
+      
+      // 🐛 FIX 1: Save the ID!
+      animationFrameId = requestAnimationFrame(animate);
+    };
 
-      // Mathematical Parabola (x, y, z)
-      positions[i3 + 0] = Math.cos(angle) * spread * localTime;
-      positions[i3 + 1] = 1.3 + (jumpHeight * localTime) - (0.5 * gravity * localTime * localTime);
-      positions[i3 + 2] = Math.sin(angle) * spread * localTime;
-    }
-    fountainGeometry.attributes.position.needsUpdate = true;
-  }
-  // --- END PERFECT LAVA PHYSICS ---
-
-  renderer.render(scene, camera);
-  requestAnimationFrame(animate);
-};
-
-animate();
+    animate();
 
     return () => {
+      // 🐛 FIX 2: Proper Cleanup!
+      cancelAnimationFrame(animationFrameId);
+      ScrollTrigger.getAll().forEach(t => t.kill()); // Kill GSAP triggers
       window.removeEventListener('resize', handleResize);
+      
       renderer.dispose();
       geometry.dispose();
       material.dispose();
+      waterGeometry.dispose();
+      waterMaterial.dispose();
     };
-  }, []);
+  }, [onPhaseUpdate]); // 🐛 FIX 3: Added onPhaseUpdate to dependency array
 
   return (
     <div ref={containerRef} className="fixed inset-0 pointer-events-none z-0">
