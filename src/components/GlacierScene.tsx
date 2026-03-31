@@ -279,6 +279,12 @@ const particleFragmentShader = `
 export const GlacierScene: React.FC<GlacierSceneProps> = ({ onPhaseUpdate }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  // Keep track of the latest callback without triggering re-renders
+  const onPhaseUpdateRef = useRef(onPhaseUpdate);
+  useEffect(() => {
+    onPhaseUpdateRef.current = onPhaseUpdate;
+  }, [onPhaseUpdate]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -460,7 +466,7 @@ scene.add(water);
         // 2. Phase and Rotation
         material.uniforms.uPhase.value = p;
         mesh.rotation.y = self.progress * Math.PI * 4;
-        onPhaseUpdate(p);
+        onPhaseUpdateRef.current(p);
 
         // --- 🌲 SYNCHRONIZED TREE GROWTH & SMOOTH FADE ---
         const spreadMultiplier = 1.0 + (Math.max(0, p - 0.4) * 0.4); 
@@ -640,7 +646,7 @@ scene.add(water);
       waterGeometry.dispose();
       waterMaterial.dispose();
     };
-  }, [onPhaseUpdate]); // 🐛 FIX 3: Added onPhaseUpdate to dependency array
+  }, []); // Empty dependency array ensures WebGL initializes exactly once
 
   return (
     <div ref={containerRef} className="fixed inset-0 pointer-events-none z-0">
