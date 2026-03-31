@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 const QUESTIONS: Record<string, { q: string; options: string[]; correct: number; explanation: string }[]> = {
   mineralogy: [
@@ -98,11 +98,31 @@ function LiveScoreBar({ score, total }: { score: number; total: number }) {
 export default function QuizPage() {
   const { topicId } = useParams<{ topicId: string }>();
   const navigate = useNavigate();
-  const questions = QUESTIONS[topicId ?? ''] ?? [];
   const meta = TOPIC_META[topicId ?? ''] ?? { name: 'Quiz', icon: '📝' };
 
+  // Add an incrementing "attempt" state to force a re-shuffle
+  const [attempt, setAttempt] = useState(0);
+
+  const questions = useMemo(() => {
+    if (!QUESTIONS[topicId ?? '']) return [];
+    // Copy the array, shuffle it, and shuffle the options inside
+    return [...QUESTIONS[topicId ?? '']]
+      .sort(() => Math.random() - 0.5)
+      .map(q => {
+        const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+        const newCorrectIdx = shuffledOptions.indexOf(q.options[q.correct]);
+        return { ...q, options: shuffledOptions, correct: newCorrectIdx };
+      });
+  }, [topicId, attempt]);
   const [answers, setAnswers] = useState<(number | null)[]>(Array(questions.length).fill(null));
   const [submitted, setSubmitted] = useState(false);
+
+  // Add this fix:
+  useEffect(() => {
+    setAnswers(Array(questions.length).fill(null));
+    setSubmitted(false);
+    window.scrollTo(0, 0); // Optional: scroll to top on topic change
+  }, [topicId, questions.length]);
 
   if (questions.length === 0) {
     return (
@@ -222,7 +242,7 @@ export default function QuizPage() {
 
               <div className="flex gap-3 justify-center">
                 <button
-                  onClick={() => { setAnswers(Array(questions.length).fill(null)); setSubmitted(false); }}
+                  onClick={() => { setAnswers(Array(questions.length).fill(null)); setSubmitted(false); setAttempt(a => a + 1); }}
                   className="px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 text-sm font-semibold hover:bg-white/10 transition-colors"
                 >Retry</button>
                 <button
@@ -358,7 +378,7 @@ export default function QuizPage() {
                 </div>
 
                 {/* options */}
-                <div className="space-y-2.5 ml-10">
+                <div className="space-y-2.5 ml-10" role="radiogroup" aria-label="Quiz options">
                   {question.options.map((opt, oIdx) => {
                     let cls = 'border-white/8 bg-slate-900/30 text-slate-300 hover:border-white/20 hover:bg-slate-900/60 cursor-pointer';
                     if (isAnswered) {
@@ -367,7 +387,8 @@ export default function QuizPage() {
                       else cls = 'border-white/5 bg-transparent text-slate-600 opacity-40 cursor-default';
                     }
                     return (
-                      <button key={oIdx} onClick={() => handleSelect(qIdx, oIdx)} disabled={isAnswered}
+                      <button key={oIdx} onClick={() => handleSelect(qIdx, oIdx)} disabled={isAnswered || submitted}
+                        role="radio" aria-checked={oIdx === userAnswer}
                         className={`w-full text-left flex items-center gap-3 p-3.5 rounded-xl border text-sm transition-all duration-200 ${cls}`}
                       >
                         <span className="w-6 h-6 rounded-full border border-current flex items-center justify-center text-[10px] font-bold flex-shrink-0">
