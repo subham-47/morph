@@ -46,7 +46,7 @@ const phases = [
   },
 ];
 
-export default function App() {
+function App() {
   const [phase, setPhase] = React.useState(0);
   
   // --- SEARCH STATE & LOGIC ---
@@ -349,5 +349,18 @@ export default function App() {
       )}
 
     </div>
+  );
+}
+
+function HomePage() {
+  return <App />;
+}
+
+export default function Root() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/quiz" element={<QuizTopics />} />
+    </Routes>
   );
 }
