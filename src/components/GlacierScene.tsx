@@ -411,7 +411,7 @@ scene.add(water);
         const growthHeight = Math.max(0, p - 0.4) * 0.4; 
         
         // 3. LIFTED THE BASE HEIGHT
-        const y = -0.5 + slopeHeight + growthHeight; 
+        const y = -0.6 + slopeHeight + growthHeight; 
 
             dummy.position.set(x, y, z);
             dummy.rotation.set(0, -angle, 0); 
