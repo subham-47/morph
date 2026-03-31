@@ -2,7 +2,7 @@ import React from 'react';
 import GlacierScene from './components/GlacierScene';
 import ContentOverlay from './components/ContentOverlay';
 import { motion } from 'motion/react';
-import { ArrowRight, Mountain, Wind, Flame, Layers, Globe, Zap } from 'lucide-react';
+import { Mountain, Wind, Flame, Layers, Globe, Zap } from 'lucide-react';
 import { cn } from './lib/utils';
 
 const phases = [
@@ -51,7 +51,7 @@ export default function App() {
     <div className="relative bg-[#020617] text-slate-50 min-h-screen selection:bg-blue-500/30">
       <GlacierScene onPhaseUpdate={setPhase} />
 
-      {/* Navigation */}
+      {/* --- TOP NAVIGATION --- */}
       <nav className="fixed top-0 left-0 right-0 z-50 px-6 py-6 md:px-12 pointer-events-auto">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -62,65 +62,81 @@ export default function App() {
           </div>
           
           <div className="hidden md:flex items-center gap-10">
-            {['Research', 'Evolution', 'Data', 'Contact'].map((item) => (
-              <a 
+            {/* Smooth Scroll Navigation Links */}
+            {['Evolution', 'Research', 'Data', 'Contact'].map((item) => (
+              <button 
                 key={item} 
-                href={`#${item.toLowerCase()}`}
+                onClick={() => {
+                  const target = document.getElementById(item.toLowerCase());
+                  if (target) {
+                    const topOffset = target.getBoundingClientRect().top + window.scrollY;
+                    window.scrollTo({ top: topOffset, behavior: 'smooth' });
+                  }
+                }}
                 className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors"
               >
                 {item}
-              </a>
+              </button>
             ))}
-            <button className="px-6 py-2 bg-blue-600/10 border border-blue-500/20 rounded-full text-[10px] font-mono uppercase tracking-widest hover:bg-blue-600/20 transition-all">
+            <button 
+              onClick={() => {
+                const target = document.getElementById('data');
+                target?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="px-6 py-2 bg-blue-600/10 border border-blue-500/20 rounded-full text-[10px] font-mono uppercase tracking-widest hover:bg-blue-600/20 transition-all"
+            >
               Explore Data
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Scroll Container */}
-      <div id="scroll-container" className="relative z-10">
-        {/* Phase Overlays */}
-        {phases.map((phase, i) => (
-          <section 
-            key={phase.id} 
-            className="h-screen flex items-center px-6 md:px-24"
-          >
-            <motion.div 
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="max-w-xl p-8 md:p-12 bg-gradient-to-b from-slate-900/30 to-transparent backdrop-blur-md border border-white/10 rounded-3xl shadow-2xl"
+      {/* --- SCROLLING CONTENT --- */}
+      <div className="relative z-10">
+        
+        {/* 1. Evolution Section (The 3D Phases) */}
+        <div id="evolution">
+          {phases.map((phase, i) => (
+            <section 
+              key={phase.id} 
+              className="h-screen flex items-center px-6 md:px-24 pointer-events-none"
             >
-              <span className={cn("font-mono text-[10px] uppercase tracking-[0.4em] mb-4 block", phase.color)}>
-                {phase.tag}
-              </span>
-              <h2 className="font-display text-5xl md:text-7xl font-black leading-tight mb-6">
-                {phase.title.split(' ').map((word, idx) => (
-                  <span key={idx} className={idx === 1 ? phase.color : ""}>
-                    {word}{' '}
-                  </span>
-                ))}
-              </h2>
-              <p className="text-slate-400 text-sm md:text-base leading-relaxed mb-8">
-                {phase.desc}
-              </p>
-              
-              <div className="flex gap-12">
-                {phase.stats.map((stat) => (
-                  <div key={stat.label}>
-                    <div className={cn("font-display text-2xl font-bold mb-1", phase.color)}>{stat.value}</div>
-                    <div className="font-mono text-[9px] uppercase tracking-widest text-slate-500">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          </section>
-        ))}
+              <motion.div 
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="max-w-xl p-8 md:p-12 bg-gradient-to-b from-slate-900/30 to-transparent backdrop-blur-md border border-white/10 rounded-3xl shadow-2xl"
+              >
+                <span className={cn("font-mono text-[10px] uppercase tracking-[0.4em] mb-4 block", phase.color)}>
+                  {phase.tag}
+                </span>
+                <h2 className="font-display text-5xl md:text-7xl font-black leading-tight mb-6">
+                  {phase.title.split(' ').map((word, idx) => (
+                    <span key={idx} className={idx === 1 ? phase.color : ""}>
+                      {word}{' '}
+                    </span>
+                  ))}
+                </h2>
+                <p className="text-slate-400 text-sm md:text-base leading-relaxed mb-8">
+                  {phase.desc}
+                </p>
+                
+                <div className="flex gap-12">
+                  {phase.stats.map((stat) => (
+                    <div key={stat.label}>
+                      <div className={cn("font-display text-2xl font-bold mb-1", phase.color)}>{stat.value}</div>
+                      <div className="font-mono text-[9px] uppercase tracking-widest text-slate-500">{stat.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            </section>
+          ))}
+        </div>
 
-        {/* Features Section */}
-        <section id="research" className="min-h-screen py-32 px-6 md:px-12 pointer-events-auto">
-          <div className="max-w-7xl mx-auto">
+        {/* 2. Research Section */}
+        <section id="research" className="min-h-screen py-32 px-6 md:px-12 pointer-events-auto flex items-center">
+          <div className="max-w-7xl mx-auto w-full">
             <div className="text-center mb-24">
               <motion.span 
                 initial={{ opacity: 0 }}
@@ -173,35 +189,20 @@ export default function App() {
           </div>
         </section>
         
-        {/* All the content and the NEW footer will come from here now */}
-        <ContentOverlay />
+        {/* 3. Data Section (Contains Library, Exams, Minerals, and Footer) */}
+        <div id="data">
+          <ContentOverlay />
+        </div>
+
       </div>
 
-      {/* Fixed UI Overlays */}
-      {/* Scroll Indicator */}
+      {/* --- FIXED UI --- */}
+      {/* Scroll Indicator (Kept this so users know to scroll!) */}
       <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 pointer-events-none opacity-50">
         <span className="font-mono text-[8px] uppercase tracking-[0.5em] text-slate-500">Scroll to evolve</span>
         <div className="w-[1px] h-12 bg-gradient-to-b from-blue-500 to-transparent animate-pulse" />
       </div>
 
-      {/* Phase Dots */}
-      <div className="fixed right-8 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-4">
-        {[0, 1, 2].map((dot) => (
-          <button 
-            key={dot}
-            onClick={() => {
-              const target = document.getElementById('scroll-container')?.children[dot];
-              target?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className={cn(
-              "w-1.5 h-1.5 rounded-full transition-all duration-500 cursor-pointer",
-              Math.round(phase) === dot 
-                ? "bg-blue-400 scale-150 shadow-[0_0_10px_rgba(96,165,250,0.5)]" 
-                : "bg-white/20 border border-white/10 hover:bg-white/40"
-            )}
-          />
-        ))}
-      </div>
     </div>
   );
 }
