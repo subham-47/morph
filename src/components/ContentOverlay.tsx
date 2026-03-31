@@ -66,7 +66,7 @@ export default function ContentOverlay() {
           </div>
         </section>
 
-        {/* --- EXAM CORNER (Clean List Layout instead of Grid boxes) --- */}
+       {/* --- EXAM CORNER --- */}
         <section id="exams" className="pointer-events-auto max-w-3xl">
           <div className="mb-10">
             <p className="text-blue-400 tracking-[0.2em] text-xs uppercase font-bold mb-3 flex items-center gap-4">
@@ -75,15 +75,17 @@ export default function ContentOverlay() {
             <h2 className="text-4xl font-light tracking-wide">Target <span className="text-blue-300 font-bold italic">Exams</span></h2>
           </div>
 
+          {/* All 3 Buttons Restored! */}
           <div className="flex gap-4 border-b border-white/10 pb-4 mb-6">
             <button onClick={() => setExamTab('profiles')} className={`text-sm font-medium transition-colors ${examTab === 'profiles' ? 'text-white' : 'text-slate-500 hover:text-slate-300'}`}>Exam Profiles</button>
             <button onClick={() => setExamTab('notifications')} className={`text-sm font-medium transition-colors ${examTab === 'notifications' ? 'text-white' : 'text-slate-500 hover:text-slate-300'}`}>Notifications</button>
+            <button onClick={() => setExamTab('pyq')} className={`text-sm font-medium transition-colors ${examTab === 'pyq' ? 'text-white' : 'text-slate-500 hover:text-slate-300'}`}>PYQ Archive</button>
           </div>
 
+          {/* TAB CONTENT: Profiles */}
           {examTab === 'profiles' && (
-            <div className="space-y-2">
+            <div className="space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-500">
               {EXAMS.map((exam) => (
-                // Sleek horizontal rows instead of massive boxes
                 <div key={exam.name} className="group flex items-center justify-between p-4 hover:bg-white/[0.03] border border-transparent hover:border-white/5 rounded-xl transition-all cursor-pointer">
                   <div className="flex items-center gap-4">
                     <span className="text-2xl opacity-60 group-hover:opacity-100">{exam.icon}</span>
@@ -93,11 +95,28 @@ export default function ContentOverlay() {
                     </div>
                   </div>
                   <div className="text-right hidden sm:block">
-                     {/* Just show one key piece of data to tease the user */}
                     <span className="text-xs font-mono text-blue-400/70">{Object.values(exam.details)[0]}</span>
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* TAB CONTENT: Notifications Placeholder */}
+          {examTab === 'notifications' && (
+            <div className="p-8 text-center border border-white/5 rounded-xl bg-white/[0.01] animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <span className="text-3xl mb-3 block opacity-50">🔔</span>
+              <p className="text-slate-400 text-sm">No new exam notifications.</p>
+              <p className="text-slate-600 text-xs mt-1">Check back later for admit card and result updates.</p>
+            </div>
+          )}
+
+          {/* TAB CONTENT: PYQ Archive Placeholder */}
+          {examTab === 'pyq' && (
+            <div className="p-8 text-center border border-white/5 rounded-xl bg-white/[0.01] animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <span className="text-3xl mb-3 block opacity-50">📚</span>
+              <p className="text-slate-400 text-sm">Previous Year Questions</p>
+              <p className="text-slate-600 text-xs mt-1">Select an exam to start browsing the archive.</p>
             </div>
           )}
         </section>
