@@ -7,6 +7,8 @@ import { Mountain, Wind, Flame, Layers, Globe, Zap } from 'lucide-react';
 import { cn } from './lib/utils';
 import QuizTopics from './pages/QuizTopics';
 import QuizPage from './pages/QuizPage';
+import GlacierLabHub from './pages/GlacierLabHub';
+import CrystalLab from './pages/CrystalLab';
 
 const phases = [
   {
