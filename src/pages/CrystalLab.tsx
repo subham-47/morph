@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, Maximize2, Rotate3D, Layers, Grid3X3, Play } from 'lucide-react';
+import { ChevronLeft, Maximize2, Rotate3d, Layers, Grid3x3, Play } from 'lucide-react';
 
 const CRYSTAL_SYSTEMS = [
   { id: 'isometric', name: 'Isometric', desc: 'a = b = c, α = β = γ = 90°' },
@@ -85,7 +85,7 @@ export default function CrystalLab() {
                 showAxes ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' : 'bg-white/5 text-slate-400 border-transparent hover:bg-white/10 hover:text-white'
               }`}
             >
-              <Grid3X3 className="w-4 h-4" />
+              <Grid3x3 className="w-4 h-4" />
               Axes (a,b,c)
             </button>
             
@@ -105,7 +105,7 @@ export default function CrystalLab() {
                 showRotation ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-white/5 text-slate-400 border-transparent hover:bg-white/10 hover:text-white'
               }`}
             >
-              <Rotate3D className="w-4 h-4" />
+              <Rotate3d className="w-4 h-4" />
               Rotation Axis
             </button>
           </div>
