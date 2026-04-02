@@ -226,14 +226,61 @@ function App() {
         </div>
       </nav>
 
-      {/* --- MOBILE DROPDOWN MENU --- */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-[70px] left-0 w-full bg-slate-900/95 backdrop-blur-xl border-b border-white/10 z-40 p-6 flex flex-col gap-6 shadow-2xl">
-          <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-slate-200 hover:text-blue-400">Home</Link>
-          <Link to="/lab" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-slate-200 hover:text-blue-400">Glacier Lab</Link>
-          <Link to="/database" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-slate-200 hover:text-blue-400">Mineral Database</Link>
+      {/* --- MOBILE DRAWER (Slide from left) --- */}
+      <div 
+        className={`md:hidden fixed top-[70px] left-0 w-full h-[calc(100vh-70px)] bg-[#0b0f1a] z-40 overflow-y-auto transition-transform duration-300 ease-in-out border-t border-white/10 ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="p-6 pb-24">
+          
+          {/* Section 1: Topic Library */}
+          <div className="mb-8">
+            <div className="text-[11px] text-blue-500 uppercase tracking-widest mb-3 pb-2 border-b border-white/10 font-bold">
+              Topic Library
+            </div>
+            <div className="flex flex-col">
+              <Link to="/database" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 py-3 border-b border-white/5 text-slate-300 hover:text-blue-400 transition-colors">
+                <span className="text-lg">💎</span> Mineralogy
+              </Link>
+              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 py-3 border-b border-white/5 text-slate-300 hover:text-blue-400 transition-colors">
+                <span className="text-lg">🪨</span> Petrology
+              </Link>
+              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 py-3 border-b border-white/5 text-slate-300 hover:text-blue-400 transition-colors">
+                <span className="text-lg">🌋</span> Structural Geology
+              </Link>
+              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 py-3 border-b border-white/5 text-slate-300 hover:text-blue-400 transition-colors">
+                <span className="text-lg">🗺️</span> Geomorphology
+              </Link>
+            </div>
+          </div>
+
+          {/* Section 2: Quick Links */}
+          <div className="mb-8">
+            <div className="text-[11px] text-blue-500 uppercase tracking-widest mb-3 pb-2 border-b border-white/10 font-bold">
+              Quick Links
+            </div>
+            <div className="flex flex-col">
+              <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 py-3 border-b border-white/5 text-slate-300 hover:text-blue-400 transition-colors">
+                <span className="text-lg">🏠</span> Home
+              </Link>
+              <Link to="/lab" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 py-3 border-b border-white/5 text-slate-300 hover:text-blue-400 transition-colors">
+                <span className="text-lg">🔬</span> Glacier Lab Hub
+              </Link>
+              <Link to="/quiz" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 py-3 border-b border-white/5 text-slate-300 hover:text-blue-400 transition-colors">
+                <span className="text-lg">🧠</span> Practice Quiz
+              </Link>
+              <button 
+                onClick={() => { setIsMobileMenuOpen(false); setIsSearchOpen(true); }} 
+                className="flex items-center gap-3 py-3 border-b border-white/5 text-slate-300 hover:text-blue-400 transition-colors text-left"
+              >
+                <span className="text-lg">🔍</span> Search Database
+              </button>
+            </div>
+          </div>
+
         </div>
-      )}
+      </div>
 
       {/* --- SCROLLING CONTENT --- */}
       <div className="relative z-10">
