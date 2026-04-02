@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronLeft, Gem, Microscope, Map as MapIcon, Lock } from 'lucide-react';
+import { ChevronLeft, Gem, Microscope, Compass, Lock } from 'lucide-react';
 
 const LAB_MODULES = [
   {
@@ -29,7 +29,7 @@ const LAB_MODULES = [
     id: 'topography',
     title: 'Topographic Sandbox',
     desc: 'Draw contour lines and watch them generate 3D terrain in real-time.',
-    icon: MapIcon,
+    icon: Compass,
     status: 'locked',
     path: '#',
     color: 'text-slate-500',
