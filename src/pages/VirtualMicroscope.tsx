@@ -9,9 +9,9 @@ const THIN_SECTIONS = [
     name: 'Quartz',
     rock: 'Granite',
     desc: 'Shows classic undulose (wavy) extinction in XPL. First-order gray/white interference colors.',
-    extinctionAngle: 0, // Parallel extinction
+    extinctionAngle: 0, 
     isPleochroic: false,
-    // CSS generated textures to simulate the mineral
+    // Quartz uses CSS gradients until you upload real photos for it
     texturePPL: 'radial-gradient(circle at center, #f8f9fa 0%, #e9ecef 100%)',
     textureXPL: 'conic-gradient(from 0deg, #d1d5db, #f3f4f6, #9ca3af, #f3f4f6, #d1d5db)'
   },
@@ -20,8 +20,9 @@ const THIN_SECTIONS = [
     name: 'Biotite Mica',
     rock: 'Schist',
     desc: 'Strong pleochroism in PPL (changes from light to dark brown). Shows "birdseye" texture in XPL.',
-    extinctionAngle: 3, // Near parallel
+    extinctionAngle: 3, 
     isPleochroic: true,
+    // Biotite uses CSS gradients until you upload real photos for it
     texturePPL: 'linear-gradient(45deg, #a0522d, #cd853f)',
     textureXPL: 'repeating-radial-gradient(circle at 0 0, #8b4513, #a0522d 10px, #5c4033 20px)'
   },
@@ -30,12 +31,12 @@ const THIN_SECTIONS = [
     name: 'Plagioclase Feldspar',
     rock: 'Gabbro',
     desc: 'Diagnostic polysynthetic twinning (zebra stripes) visible in XPL. Low relief in PPL.',
-    extinctionAngle: 30, // Inclined extinction
+    extinctionAngle: 30, 
     isPleochroic: false,
-   imgPPL: '/minerals/plagioclase-ppl.jpeg', 
+    // Plagioclase uses your REAL photos!
+    imgPPL: '/minerals/plagioclase-ppl.jpeg', 
     imgXPL: '/minerals/plagioclase-xpl.jpeg'  
   }
-  // ... update your other minerals exactly like this
 ];
 
 export default function VirtualMicroscope() {
@@ -49,7 +50,7 @@ export default function VirtualMicroscope() {
   const opticsStyle = useMemo(() => {
     const rad = (rotation - activeMineral.extinctionAngle) * (Math.PI / 180);
     
-    // Check if the mineral has a real image, otherwise use the CSS texture
+    // Check if the mineral has real photos uploaded, otherwise fall back to CSS textures
     const hasImage = !!activeMineral.imgPPL;
     const currentBg = hasImage 
       ? `url(${isXPL ? activeMineral.imgXPL : activeMineral.imgPPL})`
@@ -60,7 +61,7 @@ export default function VirtualMicroscope() {
       const opacity = Math.max(0.08, intensity); 
       
       return {
-        background: currentBg, // Use 'background' instead of 'backgroundImage' so CSS gradients still work
+        background: currentBg,
         backgroundSize: hasImage ? 'cover' : 'auto',
         backgroundPosition: 'center',
         opacity: opacity, 
