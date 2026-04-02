@@ -56,7 +56,6 @@ function App() {
   const [phase, setPhase] = React.useState(0);
 
   // --- SEARCH STATE & LOGIC ---
-  export default function App() {
   // 1. Navigation State
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   
