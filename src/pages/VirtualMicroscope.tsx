@@ -45,38 +45,39 @@ export default function VirtualMicroscope() {
 
   const activeMineral = THIN_SECTIONS.find(m => m.id === activeId)!;
 
-  // --- OPTICS SIMULATION ENGINE (UPGRADED FOR REAL IMAGES) ---
+  // --- OPTICS SIMULATION ENGINE (HYBRID) ---
   const opticsStyle = useMemo(() => {
     const rad = (rotation - activeMineral.extinctionAngle) * (Math.PI / 180);
     
-    // Choose the real image based on which light is active
-    const currentImage = isXPL ? activeMineral.imgXPL : activeMineral.imgPPL;
+    // Check if the mineral has a real image, otherwise use the CSS texture
+    const hasImage = !!activeMineral.imgPPL;
+    const currentBg = hasImage 
+      ? `url(${isXPL ? activeMineral.imgXPL : activeMineral.imgPPL})`
+      : (isXPL ? activeMineral.textureXPL : activeMineral.texturePPL);
     
     if (isXPL) {
-      // XPL: The real image still goes black every 90 degrees
       const intensity = Math.pow(Math.sin(2 * rad), 2);
-      const opacity = Math.max(0.08, intensity); // Never goes 100% black, keeps a tiny bit of visibility
+      const opacity = Math.max(0.08, intensity); 
       
       return {
-        backgroundImage: `url(${currentImage})`,
-        backgroundSize: 'cover',
+        background: currentBg, // Use 'background' instead of 'backgroundImage' so CSS gradients still work
+        backgroundSize: hasImage ? 'cover' : 'auto',
         backgroundPosition: 'center',
-        opacity: opacity, // This creates the extinction effect!
+        opacity: opacity, 
         transform: `rotate(${rotation}deg)`
       };
     } else {
-      // PPL: The real image rotates, and changes brightness if pleochroic
       let filter = 'none';
       if (activeMineral.isPleochroic) {
         const pleoIntensity = Math.abs(Math.cos(rad));
         filter = `brightness(${0.8 + pleoIntensity * 0.3}) saturate(${1 + pleoIntensity * 0.2})`;
       }
       return {
-        backgroundImage: `url(${currentImage})`,
-        backgroundSize: 'cover',
+        background: currentBg, 
+        backgroundSize: hasImage ? 'cover' : 'auto',
         backgroundPosition: 'center',
         opacity: 1,
-        filter: filter, // This creates the color-changing pleochroism effect!
+        filter: filter, 
         transform: `rotate(${rotation}deg)`
       };
     }
