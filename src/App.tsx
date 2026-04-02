@@ -9,6 +9,7 @@ import QuizTopics from './pages/QuizTopics';
 import QuizPage from './pages/QuizPage';
 import GlacierLabHub from './pages/GlacierLabHub';
 import CrystalLab from './pages/CrystalLab';
+import MineralDatabase from './pages/MineralDatabase';
 
 const phases = [
   {
