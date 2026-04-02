@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, Gem, Microscope, Compass, Lock } from 'lucide-react';
 
+
 const LAB_MODULES = [
   {
     id: 'crystallography',
