@@ -132,12 +132,12 @@ export default function ContentOverlay() {
               </p>
               <h2 className="text-4xl font-light tracking-wide">Mineral <span className="text-blue-300 font-bold italic">Database</span></h2>
             </div>
-            <button 
-              onClick={() => alert("This will link to your full Lab page!")} 
-              className="text-sm font-medium text-slate-400 hover:text-white transition-colors border-b border-slate-700 hover:border-white pb-1"
-            >
-              Open Full Lab &rarr;
-            </button>
+            <Link 
+              to="/database" 
+              className="text-sm font-medium text-slate-400 hover:text-white transition-colors border-b border-slate-700 hover:border-white pb-1"
+            >
+              Open Full Tab &rarr;
+            </Link>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-start">
