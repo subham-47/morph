@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Edges, Environment } from '@react-three/drei';
 import * as THREE from 'three';
@@ -52,15 +52,14 @@ const CrystalMesh = ({ activeSystem, isPlaying, setIsPlaying }: any) => {
       {/* Translucent Glass Material */}
       <meshPhysicalMaterial 
         color="#a0c0ff"
-        transmission={0.9} // Makes it look like glass
+        transmission={0.9} 
         opacity={1}
         transparent
         roughness={0.1}
         metalness={0.1}
-        ior={1.5} // Index of refraction (Quartz-like)
+        ior={1.5} 
         side={THREE.DoubleSide}
       />
-      {/* Draws the dark outlines on the crystal edges so we can see its shape clearly */}
       <Edges scale={1} threshold={15} color="#1e3a8a" /> 
     </mesh>
   );
@@ -73,48 +72,43 @@ export default function CrystalScene({
     <div className="absolute inset-0 w-full h-full">
       <Canvas camera={{ position: [4, 3, 5], fov: 45 }}>
         
-        {/* Lighting & Environment */}
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[10, 10, 5]} intensity={1.5} />
-        <Environment preset="city" /> {/* Adds realistic reflections to the glass */}
-        
-        {/* Controls */}
-        <OrbitControls enablePan={false} enableZoom={true} minDistance={3} maxDistance={10} />
+        {/* WE WRAPPED EVERYTHING IN SUSPENSE TO PREVENT THE CRASH! */}
+        <Suspense fallback={null}>
+          
+          <ambientLight intensity={0.5} />
+          <directionalLight position={[10, 10, 5]} intensity={1.5} />
+          <Environment preset="city" /> 
+          
+          <OrbitControls enablePan={false} enableZoom={true} minDistance={3} maxDistance={10} />
 
-        <group>
-          {/* The Main Crystal */}
-          <CrystalMesh activeSystem={activeSystem} isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
+          <group>
+            <CrystalMesh activeSystem={activeSystem} isPlaying={isPlaying} setIsPlaying={setIsPlaying} />
 
-          {/* 1. Show Crystallographic Axes (a, b, c) */}
-          {showAxes && (
-            <group>
-              {/* X Axis (Red) */}
-              <mesh rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.02, 0.02, 4]} /><meshBasicMaterial color="#ef4444" /></mesh>
-              {/* Y Axis (Green) */}
-              <mesh><cylinderGeometry args={[0.02, 0.02, 4]} /><meshBasicMaterial color="#22c55e" /></mesh>
-              {/* Z Axis (Blue) */}
-              <mesh rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.02, 0.02, 4]} /><meshBasicMaterial color="#3b82f6" /></mesh>
-            </group>
-          )}
+            {showAxes && (
+              <group>
+                <mesh rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.02, 0.02, 4]} /><meshBasicMaterial color="#ef4444" /></mesh>
+                <mesh><cylinderGeometry args={[0.02, 0.02, 4]} /><meshBasicMaterial color="#22c55e" /></mesh>
+                <mesh rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.02, 0.02, 4]} /><meshBasicMaterial color="#3b82f6" /></mesh>
+              </group>
+            )}
 
-          {/* 2. Show Mirror Plane (Horizontal cut) */}
-          {showPlanes && (
-            <mesh rotation={[-Math.PI / 2, 0, 0]}>
-              <planeGeometry args={[3.5, 3.5]} />
-              <meshBasicMaterial color="#10b981" transparent opacity={0.3} side={THREE.DoubleSide} depthWrite={false} />
-              <Edges scale={1} color="#059669" />
-            </mesh>
-          )}
+            {showPlanes && (
+              <mesh rotation={[-Math.PI / 2, 0, 0]}>
+                <planeGeometry args={[3.5, 3.5]} />
+                <meshBasicMaterial color="#10b981" transparent opacity={0.3} side={THREE.DoubleSide} depthWrite={false} />
+                <Edges scale={1} color="#059669" />
+              </mesh>
+            )}
 
-          {/* 3. Show 4-Fold Rotation Axis (Vertical line) */}
-          {showRotation && (
-            <mesh>
-              <cylinderGeometry args={[0.04, 0.04, 5]} />
-              <meshBasicMaterial color="#f59e0b" />
-            </mesh>
-          )}
-        </group>
+            {showRotation && (
+              <mesh>
+                <cylinderGeometry args={[0.04, 0.04, 5]} />
+                <meshBasicMaterial color="#f59e0b" />
+              </mesh>
+            )}
+          </group>
 
+        </Suspense>
       </Canvas>
     </div>
   );
