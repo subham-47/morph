@@ -19,11 +19,11 @@ const LAB_MODULES = [
     title: 'Virtual Microscope',
     desc: 'Examine thin sections under cross-polarized light to identify index minerals.',
     icon: Microscope,
-    status: 'locked',
-    path: '#',
-    color: 'text-slate-500',
-    bg: 'bg-slate-800/50',
-    border: 'border-white/5'
+    status: 'active', // <--- Changed from locked
+    path: '/lab/petrology', // <--- Added the path
+    color: 'text-indigo-400', // <--- Colored it Indigo
+    bg: 'bg-indigo-500/10',
+    border: 'border-indigo-500/30'
   },
   {
     id: 'topography',
