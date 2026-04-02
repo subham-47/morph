@@ -46,14 +46,14 @@ export default function VirtualMicroscope() {
 
   const activeMineral = THIN_SECTIONS.find(m => m.id === activeId)!;
 
-  // --- OPTICS SIMULATION ENGINE (HYBRID) ---
+  // --- OPTICS SIMULATION ENGINE (HYBRID & BUG FIXED) ---
   const opticsStyle = useMemo(() => {
     const rad = (rotation - activeMineral.extinctionAngle) * (Math.PI / 180);
     
-    // Check if the mineral has real photos uploaded, otherwise fall back to CSS textures
     const hasImage = !!activeMineral.imgPPL;
+    // Added safe quotes inside the url() just in case!
     const currentBg = hasImage 
-      ? `url(${isXPL ? activeMineral.imgXPL : activeMineral.imgPPL})`
+      ? `url('${isXPL ? activeMineral.imgXPL : activeMineral.imgPPL}')`
       : (isXPL ? activeMineral.textureXPL : activeMineral.texturePPL);
     
     if (isXPL) {
@@ -61,7 +61,7 @@ export default function VirtualMicroscope() {
       const opacity = Math.max(0.08, intensity); 
       
       return {
-        background: currentBg,
+        backgroundImage: currentBg, // <-- CHANGED from 'background'
         backgroundSize: hasImage ? 'cover' : 'auto',
         backgroundPosition: 'center',
         opacity: opacity, 
@@ -74,7 +74,7 @@ export default function VirtualMicroscope() {
         filter = `brightness(${0.8 + pleoIntensity * 0.3}) saturate(${1 + pleoIntensity * 0.2})`;
       }
       return {
-        background: currentBg, 
+        backgroundImage: currentBg, // <-- CHANGED from 'background'
         backgroundSize: hasImage ? 'cover' : 'auto',
         backgroundPosition: 'center',
         opacity: 1,
