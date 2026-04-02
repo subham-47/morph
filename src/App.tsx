@@ -79,7 +79,7 @@ function App() {
 {/* ... (Keep the rest of your HTML code exactly as it is below here) ... */}
 
       {/* --- TOP NAVIGATION (Original Fonts Restored) --- */}
-      {/* 1. TOP NAVIGATION BAR */}
+      {/* --- TOP NAVIGATION BAR --- */}
       <nav className="relative z-50 px-6 py-4 flex items-center justify-between border-b border-white/5 bg-[#020617]/80 backdrop-blur-md">
         
         {/* Logo/Brand */}
@@ -90,180 +90,150 @@ function App() {
         {/* Desktop Menu (Hidden on Mobile) */}
         <div className="hidden md:flex items-center gap-8">
           <Link to="/" className="text-sm font-bold text-slate-300 hover:text-blue-400 transition-colors">Home</Link>
-          <Link to="/lab" className="text-sm font-bold text-slate-300 hover:text-blue-400 transition-colors">Lab Hub</Link>
-          <Link to="/database" className="text-sm font-bold text-slate-300 hover:text-blue-400 transition-colors">Mineral Database</Link>
-        </div>
-
-        {/* Mobile Hamburger Button (Hidden on Desktop) */}
-        <button 
-          className="md:hidden text-slate-400 hover:text-white p-2"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-      </nav>
-
-      {/* 2. MOBILE DROPDOWN MENU */}
-      {/* This only renders if isMobileMenuOpen is true AND we are on a small screen */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-[70px] left-0 w-full bg-slate-900/95 backdrop-blur-xl border-b border-white/10 z-40 p-6 flex flex-col gap-6 shadow-2xl">
-          <Link 
-            to="/" 
-            onClick={() => setIsMobileMenuOpen(false)} // Closes menu when clicked!
-            className="text-lg font-bold text-slate-200 hover:text-blue-400"
-          >
-            Home
-          </Link>
-          <Link 
-            to="/lab" 
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="text-lg font-bold text-slate-200 hover:text-blue-400"
-          >
-            Glacier Lab
-          </Link>
-          <Link 
-            to="/database" 
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="text-lg font-bold text-slate-200 hover:text-blue-400"
-          >
-            Mineral Database
-          </Link>
-        </div>
-      )}
-
-            {/* 1. Topic Library */}
-            <div className="relative group">
-              <button 
-                onClick={() => {
-                  const el = document.getElementById('topics');
-                  el && window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
-                }}
-                className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors py-4"
-              >
-                Topic Library <span className="text-[8px] opacity-50 group-hover:rotate-180 transition-transform">▼</span>
-              </button>
-              <div className="absolute top-[100%] left-1/2 -translate-x-1/2 w-[600px] invisible opacity-0 translate-y-4 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-slate-950 border border-white/10 rounded-xl p-6 shadow-[0_24px_80px_rgba(0,0,0,0.8)] grid grid-cols-2 gap-8 text-left normal-case tracking-normal">
-                <div>
-                  <h4 className="text-[10px] font-mono text-blue-500 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Foundational</h4>
-                  <div className="space-y-4">
-                    <Link to="/database" className="flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg cursor-pointer transition-colors group/link">
-                      <span className="text-lg">💎</span>
-                      <div>
-                        <div className="text-sm font-bold text-slate-200 group-hover/link:text-blue-400 transition-colors">Mineral Database</div>
-                        <div className="text-xs text-slate-500 mt-0.5">Searchable catalog & properties</div>
-                      </div>
-                    </Link>
-                    <div className="flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg cursor-pointer transition-colors group/link">
-                      <span className="text-lg">🪨</span>
-                      <div>
-                        <div className="text-sm font-bold text-slate-200 group-hover/link:text-blue-400 transition-colors">Petrology</div>
-                        <div className="text-xs text-slate-500 mt-0.5">Igneous, sedimentary, metamorphic</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="text-[10px] font-mono text-blue-500 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Applied</h4>
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg cursor-pointer transition-colors group/link">
-                      <span className="text-lg">🌋</span>
-                      <div>
-                        <div className="text-sm font-bold text-slate-200 group-hover/link:text-blue-400 transition-colors">Structural Geology</div>
-                        <div className="text-xs text-slate-500 mt-0.5">Folds, faults, tectonics</div>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg cursor-pointer transition-colors group/link">
-                      <span className="text-lg">🗺️</span>
-                      <div>
-                        <div className="text-sm font-bold text-slate-200 group-hover/link:text-blue-400 transition-colors">Geomorphology</div>
-                        <div className="text-xs text-slate-500 mt-0.5">Landforms, erosion cycles</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 2. Quiz Hub */}
-            <div className="relative group">
-              <button className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors py-4">
-                Quiz Hub <span className="text-[8px] opacity-50 group-hover:rotate-180 transition-transform">▼</span>
-              </button>
-              <div className="absolute top-[100%] left-1/2 -translate-x-1/2 w-[240px] invisible opacity-0 translate-y-4 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-slate-950 border border-white/10 rounded-xl p-4 shadow-[0_24px_80px_rgba(0,0,0,0.8)] space-y-2 text-left normal-case tracking-normal">
-                <Link to="/quiz" className="hover:bg-white/5 p-3 rounded-lg cursor-pointer transition-colors flex items-center gap-3">
-              <span>📝</span>
-              <div>
-              <div className="text-sm font-bold text-slate-200">Topic Quiz</div>
-              <div className="text-xs text-slate-500">Practice by subject</div>
-            </div>
-          </Link>
-                <div className="hover:bg-white/5 p-3 rounded-lg cursor-pointer transition-colors flex items-center gap-3">
-                  <span>⏱️</span>
-                  <div>
-                    <div className="text-sm font-bold text-slate-200">Mock Test</div>
-                    <div className="text-xs text-slate-500">Full simulation</div>
-                  </div>
-                  <span className="ml-auto text-[9px] uppercase font-bold bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded">Live</span>
-                </div>
-              </div>
-            </div>
-
-            {/* 3. Exam Corner */}
+          
+          {/* 1. Topic Library */}
+          <div className="relative group">
             <button 
               onClick={() => {
-                const el = document.getElementById('exams');
+                const el = document.getElementById('topics');
                 el && window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
               }}
-              className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors py-4"
+              className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors py-4"
             >
-              Exam Corner
+              Topic Library <span className="text-[8px] opacity-50 group-hover:rotate-180 transition-transform">▼</span>
             </button>
-
-            {/* 4. Glacier Lab */}
-            <div className="relative group">
-              <button className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors py-4">
-                Glacier Lab <span className="text-[8px] opacity-50 group-hover:rotate-180 transition-transform">▼</span>
-              </button>
-              <div className="absolute top-[100%] left-1/2 -translate-x-1/2 w-[260px] invisible opacity-0 translate-y-4 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-slate-950 border border-white/10 rounded-xl p-4 shadow-[0_24px_80px_rgba(0,0,0,0.8)] space-y-2 text-left normal-case tracking-normal">
-                
-                {/* Main Hub Link */}
-                <Link to="/lab" className="hover:bg-white/5 p-3 rounded-lg cursor-pointer transition-colors flex items-center gap-3">
-                  <span className="text-xl">🔬</span>
-                  <div>
-                    <div className="text-sm font-bold text-slate-200">Experimental Hub</div>
-                    <div className="text-xs text-slate-500">View all lab modules</div>
+            <div className="absolute top-[100%] left-1/2 -translate-x-1/2 w-[600px] invisible opacity-0 translate-y-4 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-slate-950 border border-white/10 rounded-xl p-6 shadow-[0_24px_80px_rgba(0,0,0,0.8)] grid grid-cols-2 gap-8 text-left normal-case tracking-normal">
+              <div>
+                <h4 className="text-[10px] font-mono text-blue-500 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Foundational</h4>
+                <div className="space-y-4">
+                  <Link to="/database" className="flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg cursor-pointer transition-colors group/link">
+                    <span className="text-lg">💎</span>
+                    <div>
+                      <div className="text-sm font-bold text-slate-200 group-hover/link:text-blue-400 transition-colors">Mineral Database</div>
+                      <div className="text-xs text-slate-500 mt-0.5">Searchable catalog & properties</div>
+                    </div>
+                  </Link>
+                  <div className="flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg cursor-pointer transition-colors group/link">
+                    <span className="text-lg">🪨</span>
+                    <div>
+                      <div className="text-sm font-bold text-slate-200 group-hover/link:text-blue-400 transition-colors">Petrology</div>
+                      <div className="text-xs text-slate-500 mt-0.5">Igneous, sedimentary, metamorphic</div>
+                    </div>
                   </div>
-                </Link>
-
-                {/* Direct Link to Crystallography */}
-                <Link to="/lab/crystallography" className="hover:bg-white/5 p-3 rounded-lg cursor-pointer transition-colors flex items-center gap-3">
-                  <span className="text-xl">💎</span>
-                  <div>
-                    <div className="text-sm font-bold text-slate-200">Crystallography 3D</div>
-                    <div className="text-xs text-slate-500">Interactive crystal viewer</div>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-[10px] font-mono text-blue-500 uppercase tracking-widest mb-4 border-b border-white/10 pb-2">Applied</h4>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg cursor-pointer transition-colors group/link">
+                    <span className="text-lg">🌋</span>
+                    <div>
+                      <div className="text-sm font-bold text-slate-200 group-hover/link:text-blue-400 transition-colors">Structural Geology</div>
+                      <div className="text-xs text-slate-500 mt-0.5">Folds, faults, tectonics</div>
+                    </div>
                   </div>
-                  <span className="ml-auto text-[9px] uppercase font-bold bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded">New</span>
-                </Link>
-
+                  <div className="flex items-start gap-3 hover:bg-white/5 p-2 -m-2 rounded-lg cursor-pointer transition-colors group/link">
+                    <span className="text-lg">🗺️</span>
+                    <div>
+                      <div className="text-sm font-bold text-slate-200 group-hover/link:text-blue-400 transition-colors">Geomorphology</div>
+                      <div className="text-xs text-slate-500 mt-0.5">Landforms, erosion cycles</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            </div>
-
-          {/* Right Actions (Search & Quiz) */}
-          <div className="flex items-center gap-5">
-            <button 
-              onClick={() => setIsSearchOpen(true)}
-              className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-blue-400 hover:border-blue-500/50 transition-all"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            </button>
-            <button className="hidden md:flex px-6 py-2 bg-blue-600/10 border border-blue-500/20 rounded-full text-[10px] font-mono uppercase tracking-widest hover:bg-blue-600/20 transition-all">
-              Start Quiz
-            </button>
           </div>
 
+          {/* 2. Quiz Hub */}
+          <div className="relative group">
+            <button className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors py-4">
+              Quiz Hub <span className="text-[8px] opacity-50 group-hover:rotate-180 transition-transform">▼</span>
+            </button>
+            <div className="absolute top-[100%] left-1/2 -translate-x-1/2 w-[240px] invisible opacity-0 translate-y-4 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-slate-950 border border-white/10 rounded-xl p-4 shadow-[0_24px_80px_rgba(0,0,0,0.8)] space-y-2 text-left normal-case tracking-normal">
+              <Link to="/quiz" className="hover:bg-white/5 p-3 rounded-lg cursor-pointer transition-colors flex items-center gap-3">
+                <span>📝</span>
+                <div>
+                  <div className="text-sm font-bold text-slate-200">Topic Quiz</div>
+                  <div className="text-xs text-slate-500">Practice by subject</div>
+                </div>
+              </Link>
+              <div className="hover:bg-white/5 p-3 rounded-lg cursor-pointer transition-colors flex items-center gap-3">
+                <span>⏱️</span>
+                <div>
+                  <div className="text-sm font-bold text-slate-200">Mock Test</div>
+                  <div className="text-xs text-slate-500">Full simulation</div>
+                </div>
+                <span className="ml-auto text-[9px] uppercase font-bold bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded">Live</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Exam Corner */}
+          <button 
+            onClick={() => {
+              const el = document.getElementById('exams');
+              el && window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: 'smooth' });
+            }}
+            className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors py-4"
+          >
+            Exam Corner
+          </button>
+
+          {/* 4. Glacier Lab */}
+          <div className="relative group">
+            <button className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-slate-400 hover:text-blue-400 transition-colors py-4">
+              Glacier Lab <span className="text-[8px] opacity-50 group-hover:rotate-180 transition-transform">▼</span>
+            </button>
+            <div className="absolute top-[100%] left-1/2 -translate-x-1/2 w-[260px] invisible opacity-0 translate-y-4 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out bg-slate-950 border border-white/10 rounded-xl p-4 shadow-[0_24px_80px_rgba(0,0,0,0.8)] space-y-2 text-left normal-case tracking-normal">
+              <Link to="/lab" className="hover:bg-white/5 p-3 rounded-lg cursor-pointer transition-colors flex items-center gap-3">
+                <span className="text-xl">🔬</span>
+                <div>
+                  <div className="text-sm font-bold text-slate-200">Experimental Hub</div>
+                  <div className="text-xs text-slate-500">View all lab modules</div>
+                </div>
+              </Link>
+              <Link to="/lab/crystallography" className="hover:bg-white/5 p-3 rounded-lg cursor-pointer transition-colors flex items-center gap-3">
+                <span className="text-xl">💎</span>
+                <div>
+                  <div className="text-sm font-bold text-slate-200">Crystallography 3D</div>
+                  <div className="text-xs text-slate-500">Interactive crystal viewer</div>
+                </div>
+                <span className="ml-auto text-[9px] uppercase font-bold bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded">New</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Actions (Search, Quiz, Mobile Hamburger) */}
+        <div className="flex items-center gap-5">
+          <button 
+            onClick={() => setIsSearchOpen(true)}
+            className="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-blue-400 hover:border-blue-500/50 transition-all"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+          </button>
+          <button className="hidden md:flex px-6 py-2 bg-blue-600/10 border border-blue-500/20 rounded-full text-[10px] font-mono uppercase tracking-widest hover:bg-blue-600/20 transition-all">
+            Start Quiz
+          </button>
+          
+          {/* Hamburger Menu Icon */}
+          <button 
+            className="md:hidden text-slate-400 hover:text-white p-2"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
       </nav>
+
+      {/* --- MOBILE DROPDOWN MENU --- */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-[70px] left-0 w-full bg-slate-900/95 backdrop-blur-xl border-b border-white/10 z-40 p-6 flex flex-col gap-6 shadow-2xl">
+          <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-slate-200 hover:text-blue-400">Home</Link>
+          <Link to="/lab" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-slate-200 hover:text-blue-400">Glacier Lab</Link>
+          <Link to="/database" onClick={() => setIsMobileMenuOpen(false)} className="text-lg font-bold text-slate-200 hover:text-blue-400">Mineral Database</Link>
+        </div>
+      )}
 
       {/* --- SCROLLING CONTENT --- */}
       <div className="relative z-10">
