@@ -189,6 +189,13 @@ function App() {
               <Link to="/lab" className="hover:bg-white/5 p-3 rounded-lg cursor-pointer transition-colors flex items-center gap-3">
                 <span className="text-xl">🔬</span>
                 <div>
+            <div className="text-sm font-bold text-slate-200">Experimental Hub</div>
+                  <div className="text-xs text-slate-500">View all lab modules</div>
+                </div>
+              </Link>
+              <Link to="/timescale" className="hover:bg-white/5 p-3 rounded-lg cursor-pointer transition-colors flex items-center gap-3">
+                <span className="text-xl">🕰️</span>
+                <div>      
                   <div className="text-sm font-bold text-slate-200">Experimental Hub</div>
                   <div className="text-xs text-slate-500">View all lab modules</div>
                 </div>
@@ -267,6 +274,9 @@ function App() {
               </Link>
               <Link to="/lab" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 py-3 border-b border-white/5 text-slate-300 hover:text-blue-400 transition-colors">
                 <span className="text-lg">🔬</span> Glacier Lab Hub
+              </Link>
+              <Link to="/timescale" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 py-3 border-b border-white/5 text-slate-300 hover:text-blue-400 transition-colors">
+                <span className="text-lg">🕰️</span> Time Scale
               </Link>
               <Link to="/quiz" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 py-3 border-b border-white/5 text-slate-300 hover:text-blue-400 transition-colors">
                 <span className="text-lg">🧠</span> Practice Quiz
