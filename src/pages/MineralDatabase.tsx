@@ -94,6 +94,7 @@ export default function MineralDatabase() {
   
   // State for Compare Mode
   const [compareQueue, setCompareQueue] = useState<any[]>([]);
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
 
   // --- 3. CONSTRAINT SOLVER ---
   const filteredResults = useMemo(() => {
@@ -245,8 +246,8 @@ export default function MineralDatabase() {
                       e.stopPropagation(); // Prevents the main modal from opening
                       if (compareQueue.find(c => c.id === m.id)) {
                         setCompareQueue(compareQueue.filter(c => c.id !== m.id)); // Deselect
-                      } else if (compareQueue.length < 2) {
-                        setCompareQueue([...compareQueue, m]); // Select
+                      } else if (compareQueue.length < 4) {
+                        setCompareQueue([...compareQueue, m]); // Select up to 4 minerals!
                       }
                     }}
                     className={`text-[10px] font-mono font-bold px-2 py-1 rounded transition-colors ${
@@ -441,60 +442,102 @@ export default function MineralDatabase() {
         </div>
       )}
 
-      {/* --- STEP 5: COMPARE MODE TOAST & MODAL --- */}
-      {/* Toast Notification when 1 is selected */}
-      {compareQueue.length === 1 && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 bg-amber-500 text-amber-950 px-6 py-3 rounded-full font-bold shadow-[0_0_40px_rgba(245,158,11,0.3)] animate-in slide-in-from-bottom-5">
-          Select 1 more mineral to compare...
+      {/* --- STEP 5: DYNAMIC MULTI-COMPARE MODE --- */}
+      
+      {/* Floating Action Bar (Dock) */}
+      {compareQueue.length > 0 && !isCompareModalOpen && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 bg-slate-900 border border-white/10 p-2 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.8)] flex items-center gap-4 animate-in slide-in-from-bottom-5">
+          <div className="flex -space-x-3 pl-2">
+            {compareQueue.map(m => (
+              <div key={m.id} className="w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-900 flex items-center justify-center text-[10px] font-bold text-white uppercase" title={m.name}>
+                {m.name.substring(0, 2)}
+              </div>
+            ))}
+          </div>
+          <div className="text-sm font-bold text-slate-300">
+            {compareQueue.length} / 4 Selected
+          </div>
+          <button 
+            disabled={compareQueue.length < 2}
+            onClick={() => setIsCompareModalOpen(true)}
+            className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
+              compareQueue.length >= 2 
+                ? 'bg-amber-500 text-amber-950 hover:bg-amber-400' 
+                : 'bg-white/5 text-slate-500 cursor-not-allowed'
+            }`}
+          >
+            {compareQueue.length < 2 ? 'Select more...' : 'Compare Now →'}
+          </button>
+          <button 
+            onClick={() => setCompareQueue([])}
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-slate-400 hover:bg-red-500/20 hover:text-red-400 mr-1"
+          >
+            ✕
+          </button>
         </div>
       )}
 
-      {/* The Side-by-Side Compare Modal */}
-      {compareQueue.length === 2 && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 bg-[#020617]/90 backdrop-blur-xl">
-          <div className="relative w-full max-w-4xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
+      {/* The Dynamic Multi-Compare Modal */}
+      {isCompareModalOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 bg-[#020617]/90 backdrop-blur-xl overflow-y-auto">
+          <div className="relative w-full max-w-6xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200 my-auto">
             
             <div className="p-6 border-b border-white/10 flex justify-between items-center bg-black/50">
               <h2 className="text-xl font-display font-bold flex items-center gap-3 text-white">
-                <Scale className="w-5 h-5 text-amber-400" /> Diagnostic Comparison
+                <Scale className="w-5 h-5 text-amber-400" /> Diagnostic Comparison ({compareQueue.length})
               </h2>
-              <button onClick={() => setCompareQueue([])} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-slate-400 hover:text-white hover:bg-red-500/50 transition-all">✕</button>
+              <button 
+                onClick={() => { setIsCompareModalOpen(false); setCompareQueue([]); }} 
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-slate-400 hover:text-white hover:bg-red-500/50 transition-all"
+              >
+                ✕
+              </button>
             </div>
 
-            <div className="grid grid-cols-2 divide-x divide-white/10">
-              {compareQueue.map((m, idx) => {
-                const other = compareQueue[idx === 0 ? 1 : 0]; // Grab the *other* mineral to compare against
-                return (
-                  <div key={m.id} className="p-8 bg-slate-900/50">
-                    <div className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">{m.class}</div>
-                    <h3 className="text-3xl font-display font-black text-white mb-2">{m.name}</h3>
-                    <div className="font-mono text-sm text-blue-400 mb-8">{m.chemistry.formula}</div>
+            <div 
+              className="grid divide-x divide-white/10" 
+              style={{ gridTemplateColumns: `repeat(${compareQueue.length}, minmax(0, 1fr))` }}
+            >
+              {compareQueue.map((m) => {
+                // Find the absolute highest and lowest values across ALL selected minerals
+                const maxHardness = Math.max(...compareQueue.map(c => c.physical.hardness.min));
+                const minHardness = Math.min(...compareQueue.map(c => c.physical.hardness.min));
+                
+                const maxSG = Math.max(...compareQueue.map(c => c.physical.sg));
+                const minSG = Math.min(...compareQueue.map(c => c.physical.sg));
 
-                    <ul className="space-y-4 text-sm text-slate-400">
-                      <li className="flex justify-between border-b border-white/5 pb-2">
+                return (
+                  <div key={m.id} className="p-6 md:p-8 bg-slate-900/50">
+                    <div className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">{m.class}</div>
+                    <h3 className="text-2xl lg:text-3xl font-display font-black text-white mb-2 leading-tight">{m.name}</h3>
+                    <div className="font-mono text-xs text-blue-400 mb-8">{m.chemistry.formula}</div>
+
+                    <ul className="space-y-4 text-xs lg:text-sm text-slate-400">
+                      <li className="flex justify-between border-b border-white/5 pb-2 gap-2">
                         <span>Hardness (H)</span> 
-                        {/* Auto-colors Green if higher, Red if lower! */}
-                        <strong className={`font-mono ${m.physical.hardness.min > other.physical.hardness.min ? 'text-green-400' : m.physical.hardness.min < other.physical.hardness.min ? 'text-red-400' : 'text-white'}`}>
+                        <strong className={`font-mono text-right ${
+                          m.physical.hardness.min === maxHardness && maxHardness !== minHardness ? 'text-green-400' : 
+                          m.physical.hardness.min === minHardness && maxHardness !== minHardness ? 'text-red-400' : 'text-white'
+                        }`}>
                           {m.physical.hardness.min}
                         </strong>
                       </li>
-                      <li className="flex justify-between border-b border-white/5 pb-2">
+                      <li className="flex justify-between border-b border-white/5 pb-2 gap-2">
                         <span>Specific Gravity</span> 
-                        <strong className={`font-mono ${m.physical.sg > other.physical.sg ? 'text-green-400' : m.physical.sg < other.physical.sg ? 'text-red-400' : 'text-white'}`}>
+                        <strong className={`font-mono text-right ${
+                          m.physical.sg === maxSG && maxSG !== minSG ? 'text-green-400' : 
+                          m.physical.sg === minSG && maxSG !== minSG ? 'text-red-400' : 'text-white'
+                        }`}>
                           {m.physical.sg}
                         </strong>
                       </li>
-                      <li className="flex justify-between border-b border-white/5 pb-2">
+                      <li className="flex justify-between border-b border-white/5 pb-2 gap-2">
                         <span>Crystal System</span> 
-                        <strong className={`${m.structure.system !== other.structure.system ? 'text-amber-400' : 'text-white'}`}>
-                          {m.structure.system}
-                        </strong>
+                        <strong className="text-white text-right">{m.structure.system}</strong>
                       </li>
-                      <li className="flex justify-between pt-2">
+                      <li className="flex justify-between pt-2 gap-2">
                         <span>Cleavage</span> 
-                        <strong className={`${m.physical.cleavage !== other.physical.cleavage ? 'text-amber-400' : 'text-white'}`}>
-                          {m.physical.cleavage}
-                        </strong>
+                        <strong className="text-white text-right">{m.physical.cleavage}</strong>
                       </li>
                     </ul>
                   </div>
