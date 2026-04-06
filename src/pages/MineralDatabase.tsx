@@ -95,6 +95,7 @@ export default function MineralDatabase() {
   // State for Compare Mode
   const [compareQueue, setCompareQueue] = useState<any[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+  const [isCompareMode, setIsCompareMode] = useState(false); // Controls the Selection UI
 
   // --- 3. CONSTRAINT SOLVER ---
   const filteredResults = useMemo(() => {
@@ -205,7 +206,7 @@ export default function MineralDatabase() {
 
       {/* RIGHT PANEL: The Exploration Grid */}
       <main className="flex-1 overflow-y-auto bg-[radial-gradient(ellipse_at_top_right,#0f172a,#020617)] p-8 md:p-12 relative z-0">
-        <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <header className="mb-12 flex flex-col xl:flex-row xl:items-end justify-between gap-6">
           <div>
             <h1 className="text-4xl md:text-5xl font-display font-black mb-3">Ontology <span className="text-blue-500">Explorer</span></h1>
             <p className="text-slate-400 text-sm flex items-center gap-3">
@@ -213,26 +214,80 @@ export default function MineralDatabase() {
             </p>
           </div>
           
-          {/* Smart Search Bar */}
-          <div className="relative w-full md:w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-            <input 
-              type="text" 
-              placeholder="Search mineral, class, or element..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-900/80 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors shadow-inner"
-            />
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
+            {/* Smart Search Bar (Works during Compare Mode too!) */}
+            <div className="relative w-full sm:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <input 
+                type="text" 
+                placeholder="Search mineral, class, or element..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-slate-900/80 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors shadow-inner"
+              />
+            </div>
+
+            {/* Compare Mode Toggle UI */}
+            {isCompareMode ? (
+              <div className="flex items-center gap-3 w-full sm:w-auto bg-slate-900 border border-amber-500/50 p-1.5 rounded-xl animate-in fade-in slide-in-from-right-4">
+                <span className="text-xs font-bold text-amber-400 px-3 whitespace-nowrap">
+                  {compareQueue.length} / 4 Selected
+                </span>
+                <button 
+                  onClick={() => { setIsCompareMode(false); setCompareQueue([]); }}
+                  className="px-4 py-2 rounded-lg text-xs font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  disabled={compareQueue.length < 2}
+                  onClick={() => setIsCompareModalOpen(true)}
+                  className={`px-4 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                    compareQueue.length >= 2 ? 'bg-amber-500 text-amber-950 hover:bg-amber-400' : 'bg-white/5 text-slate-500 cursor-not-allowed'
+                  }`}
+                >
+                  Run Comparison
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={() => setIsCompareMode(true)}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-sm font-bold bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 hover:text-white transition-all flex items-center justify-center gap-2"
+              >
+                <Scale className="w-4 h-4" /> Compare Mode
+              </button>
+            )}
           </div>
         </header>
 
         {/* The Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          {filteredResults.map(m => (
+          {filteredResults.map(m => {
+            const isSelectedForCompare = compareQueue.some(c => c.id === m.id);
+            return (
             <div 
               key={m.id} 
-              onClick={() => { setSelectedMineral(m); setSeriesValue(0); }}
-              className="relative p-6 rounded-2xl border border-white/5 bg-slate-900/40 backdrop-blur-sm hover:border-blue-500/30 hover:bg-slate-900/60 transition-all group cursor-pointer"
+              onClick={() => { 
+                if (isCompareMode) {
+                  // If in compare mode, clicking acts like a checkbox
+                  if (isSelectedForCompare) {
+                    setCompareQueue(compareQueue.filter(c => c.id !== m.id));
+                  } else if (compareQueue.length < 4) {
+                    setCompareQueue([...compareQueue, m]);
+                  }
+                } else {
+                  // Normal mode opens the Petrographic stage
+                  setSelectedMineral(m); 
+                  setSeriesValue(0); 
+                }
+              }}
+              className={`relative p-6 rounded-2xl border backdrop-blur-sm transition-all group cursor-pointer ${
+                isCompareMode 
+                  ? isSelectedForCompare 
+                    ? 'border-amber-500 bg-amber-500/10 shadow-[0_0_30px_rgba(245,158,11,0.15)]' 
+                    : 'border-white/5 bg-slate-900/40 hover:border-amber-500/30'
+                  : 'border-white/5 bg-slate-900/40 hover:border-blue-500/30 hover:bg-slate-900/60'
+              }`}
             >
               
               <div className="flex justify-between items-start mb-4">
@@ -240,24 +295,13 @@ export default function MineralDatabase() {
                   <h3 className="text-xl font-display font-bold text-white mb-1">{m.name}</h3>
                   <div className="text-[10px] uppercase tracking-widest text-slate-500">{m.class} • {m.subclass}</div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevents the main modal from opening
-                      if (compareQueue.find(c => c.id === m.id)) {
-                        setCompareQueue(compareQueue.filter(c => c.id !== m.id)); // Deselect
-                      } else if (compareQueue.length < 4) {
-                        setCompareQueue([...compareQueue, m]); // Select up to 4 minerals!
-                      }
-                    }}
-                    className={`text-[10px] font-mono font-bold px-2 py-1 rounded transition-colors ${
-                      compareQueue.find(c => c.id === m.id) 
-                        ? 'bg-amber-500 text-amber-950 hover:bg-amber-400' 
-                        : 'text-slate-400 bg-white/5 border border-white/10 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    {compareQueue.find(c => c.id === m.id) ? 'Selected' : 'Compare +'}
-                  </button>
+                <div className="flex items-center gap-3">
+                  {/* Dynamic Checkbox that only appears in Compare Mode */}
+                  {isCompareMode && (
+                    <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${isSelectedForCompare ? 'bg-amber-500 border-amber-500 text-amber-950' : 'border-slate-600'}`}>
+                      {isSelectedForCompare && <span className="text-sm font-bold">✓</span>}
+                    </div>
+                  )}
                   <div className="text-[10px] font-mono font-bold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded">
                     {m.structure.system}
                   </div>
@@ -444,40 +488,7 @@ export default function MineralDatabase() {
 
       {/* --- STEP 5: DYNAMIC MULTI-COMPARE MODE --- */}
       
-      {/* Floating Action Bar (Dock) */}
-      {compareQueue.length > 0 && !isCompareModalOpen && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 bg-slate-900 border border-white/10 p-2 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.8)] flex items-center gap-4 animate-in slide-in-from-bottom-5">
-          <div className="flex -space-x-3 pl-2">
-            {compareQueue.map(m => (
-              <div key={m.id} className="w-8 h-8 rounded-full bg-slate-800 border-2 border-slate-900 flex items-center justify-center text-[10px] font-bold text-white uppercase" title={m.name}>
-                {m.name.substring(0, 2)}
-              </div>
-            ))}
-          </div>
-          <div className="text-sm font-bold text-slate-300">
-            {compareQueue.length} / 4 Selected
-          </div>
-          <button 
-            disabled={compareQueue.length < 2}
-            onClick={() => setIsCompareModalOpen(true)}
-            className={`px-6 py-2.5 rounded-xl font-bold text-sm transition-all ${
-              compareQueue.length >= 2 
-                ? 'bg-amber-500 text-amber-950 hover:bg-amber-400' 
-                : 'bg-white/5 text-slate-500 cursor-not-allowed'
-            }`}
-          >
-            {compareQueue.length < 2 ? 'Select more...' : 'Compare Now →'}
-          </button>
-          <button 
-            onClick={() => setCompareQueue([])}
-            className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-slate-400 hover:bg-red-500/20 hover:text-red-400 mr-1"
-          >
-            ✕
-          </button>
-        </div>
-      )}
-
-      {/* The Dynamic Multi-Compare Modal */}
+           {/* The Dynamic Multi-Compare Modal */}
       {isCompareModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-6 bg-[#020617]/90 backdrop-blur-xl overflow-y-auto">
           <div className="relative w-full max-w-6xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200 my-auto">
