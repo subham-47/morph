@@ -3,11 +3,9 @@ import { Link } from 'react-router-dom';
 import { ChevronLeft, FlaskConical, Microscope, Layers, Activity, Search } from 'lucide-react';
 
 // --- INTELLIGENCE: The Chemical Parser ---
-// Converts formula strings into machine-readable elemental proportions (e.g. Mg₂SiO₄ -> { Mg: 2, Si: 1, O: 4 })
 const parseChemicalFormula = (formula: string) => {
   const regex = /([A-Z][a-z]?)([₀-₉0-9]*)/g;
   const proportions: Record<string, number> = {};
-  // Map standard unicode subscripts to readable numbers
   const subMap: Record<string, string> = { '₀':'0', '₁':'1', '₂':'2', '₃':'3', '₄':'4', '₅':'5', '₆':'6', '₇':'7', '₈':'8', '₉':'9' };
 
   let match;
@@ -21,7 +19,6 @@ const parseChemicalFormula = (formula: string) => {
   }
   return proportions;
 };
-
 
 // --- 1. THE NEW ONTOLOGY (KNOWLEDGE GRAPH) ---
 const KNOWLEDGE_GRAPH = [
@@ -87,6 +84,7 @@ export default function MineralDatabase() {
     system: 'All',
     minHardness: 0
   });
+
   // State for the Optical Inspector Modal
   const [selectedMineral, setSelectedMineral] = useState<any | null>(null);
   const [seriesValue, setSeriesValue] = useState(0); // For Solid Solution Slider (0-100)
@@ -111,7 +109,6 @@ export default function MineralDatabase() {
       let searchMatch = true;
       if (searchQuery.trim() !== '') {
         const q = searchQuery.toLowerCase();
-        // Check if user typed an exact element symbol (e.g., "Fe" or "Mg")
         const isExactElement = m.chemistry.elements.some(el => el.toLowerCase() === q);
         searchMatch = 
           m.name.toLowerCase().includes(q) || 
@@ -203,7 +200,7 @@ export default function MineralDatabase() {
       </aside>
 
       {/* RIGHT PANEL: The Exploration Grid */}
-      <main className="flex-1 overflow-y-auto bg-[radial-gradient(ellipse_at_top_right,#0f172a,#020617)] p-8 md:p-12">
+      <main className="flex-1 overflow-y-auto bg-[radial-gradient(ellipse_at_top_right,#0f172a,#020617)] p-8 md:p-12 relative z-0">
         <header className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <h1 className="text-4xl md:text-5xl font-display font-black mb-3">Ontology <span className="text-blue-500">Explorer</span></h1>
@@ -249,7 +246,7 @@ export default function MineralDatabase() {
                   {m.chemistry.formula}
                 </div>
                 {/* Dynamically parsed chemistry display from our Regex Engine! */}
-                <div className="flex gap-1">
+                <div className="flex gap-1 flex-wrap">
                   {Object.entries(parseChemicalFormula(m.chemistry.formula)).map(([el, qty]) => (
                     <span key={el} className="text-[9px] font-mono font-bold text-slate-400 bg-slate-800/50 px-1.5 py-0.5 rounded border border-white/5">
                       {el}<span className="text-blue-500">{qty > 1 ? qty : ''}</span>
@@ -258,7 +255,7 @@ export default function MineralDatabase() {
                 </div>
               </div>
 
-              {/* Optical Snapshot (Preview for Step 2) */}
+              {/* Optical Snapshot */}
               <div className="pt-4 border-t border-white/5 grid grid-cols-2 gap-4">
                 <div>
                   <div className="text-[10px] uppercase tracking-wider text-slate-500 mb-1 flex items-center gap-1.5"><Microscope className="w-3 h-3"/> Relief</div>
@@ -283,7 +280,7 @@ export default function MineralDatabase() {
         </div>
       </main>
 
-      {/* --- STEP 2: THE THIN SECTION OPTICAL MODAL --- */}
+      {/* --- THE THIN SECTION OPTICAL MODAL --- */}
       {selectedMineral && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#020617]/80 backdrop-blur-md">
           <div className="relative w-full max-w-4xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in fade-in zoom-in-95 duration-200">
@@ -313,8 +310,8 @@ export default function MineralDatabase() {
                   className="w-32 h-32 rounded-lg rotate-12 opacity-80 mix-blend-screen"
                   style={{
                     background: selectedMineral.optical.birefringence > 0.03 
-                      ? 'linear-gradient(45deg, #f472b6, #34d399, #fbbf24)' // High order colors (e.g., Olivine, Calcite)
-                      : 'linear-gradient(45deg, #9ca3af, #d1d5db)'          // 1st order greys (e.g., Quartz)
+                      ? 'linear-gradient(45deg, #f472b6, #34d399, #fbbf24)' 
+                      : 'linear-gradient(45deg, #9ca3af, #d1d5db)'          
                   }}
                 ></div>
               </div>
@@ -341,6 +338,7 @@ export default function MineralDatabase() {
                   <span className="text-blue-300">{selectedMineral.optical.relief}</span>
                 </div>
               </div>
+            </div>
 
             {/* Right: Data Inspector */}
             <div className="w-full md:w-3/5 p-8 bg-slate-900/50 overflow-y-auto">
