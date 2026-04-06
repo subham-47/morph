@@ -281,7 +281,7 @@ export default function MineralDatabase() {
                   <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3 pb-2 border-b border-white/5">Physical Data</h4>
                   <ul className="space-y-3 text-sm text-slate-400">
                     <li className="flex justify-between"><span>Crystal System</span> <strong className="text-white">{selectedMineral.structure.system}</strong></li>
-                    <li className="flex justify-between"><span>Hardness ($H$)</span> <strong className="text-white">{selectedMineral.physical.hardness.min}{selectedMineral.physical.hardness.min !== selectedMineral.physical.hardness.max ? ` - ${selectedMineral.physical.hardness.max}` : ''}</strong></li>
+                    <li className="flex justify-between"><span>Hardness (H)</span> <strong className="text-white">{selectedMineral.physical.hardness.min}{selectedMineral.physical.hardness.min !== selectedMineral.physical.hardness.max ? ` - ${selectedMineral.physical.hardness.max}` : ''}</strong></li>
                     <li className="flex justify-between"><span>Specific Gravity</span> <strong className="text-white">{selectedMineral.physical.sg}</strong></li>
                     <li className="flex justify-between"><span>Cleavage</span> <strong className="text-white">{selectedMineral.physical.cleavage}</strong></li>
                   </ul>
