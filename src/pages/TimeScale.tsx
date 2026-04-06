@@ -152,17 +152,17 @@ export default function TimeScale() {
         </header>
 
         {/* Main Timeline Board */}
-        <main className="flex-1 overflow-x-auto overflow-y-hidden bg-[radial-gradient(ellipse_at_bottom,#0f172a,#020617)] p-8 md:p-12 cursor-grab active:cursor-grabbing relative scroll-smooth">
-          {/* FIXED: Changed to flex-row so Eons are side-by-side */}
-          <div className="inline-flex flex-row gap-6 min-w-max h-full items-center pb-10">
+        <main className="flex-1 overflow-x-auto overflow-y-hidden bg-[radial-gradient(ellipse_at_bottom,#0f172a,#020617)] p-8 md:p-12 cursor-auto relative scroll-smooth">
+          
+          {/* THE FIX: `w-max` forces the container to expand infinitely to the right, rather than wrapping or squishing */}
+          <div className="flex flex-row gap-6 w-max h-full items-center pb-10">
             
             {TIME_DATA.map((eon, eIdx) => (
-              {/* FIXED: Added explicit height and shrink-0 so cards don't squish */}
-              <div key={eIdx} className="flex h-[400px] md:h-[450px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black/40 backdrop-blur-sm shrink-0">
+              <div key={eIdx} className="flex flex-row h-[400px] md:h-[450px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black/40 backdrop-blur-sm shrink-0">
                 
                 {/* Eon Label (Vertical) */}
                 <div 
-                  className="w-16 flex flex-col items-center justify-center border-r border-white/10 shrink-0"
+                  className="w-16 flex items-center justify-center border-r border-white/10 shrink-0"
                   style={{ backgroundColor: `${eon.eon_color}40` }}
                 >
                   <span 
@@ -173,8 +173,8 @@ export default function TimeScale() {
                   </span>
                 </div>
 
-                {/* Eras Container - FIXED: Changed to flex-row and divide-x */}
-                <div className="flex flex-row divide-x divide-white/10">
+                {/* Eras Container -> Strictly forced to be a row */}
+                <div className="flex flex-row divide-x divide-white/10 shrink-0">
                   {eon.eras.map((era, eraIdx) => (
                     <div key={eraIdx} className="flex flex-row shrink-0">
                       
@@ -191,8 +191,8 @@ export default function TimeScale() {
                         </span>
                       </div>
 
-                      {/* Periods Row - FIXED: Changed to flex-row */}
-                      <div className="flex flex-row divide-x divide-white/10">
+                      {/* Periods Row -> Strictly forced to be a row */}
+                      <div className="flex flex-row divide-x divide-white/10 shrink-0">
                         {era.periods.map((period, pIdx) => {
                           
                           // Smart Search Filtering Logic
@@ -206,8 +206,7 @@ export default function TimeScale() {
                             <div 
                               key={pIdx} 
                               onClick={() => setSelectedPeriod({ ...period, era: era.era, eon: eon.eon })}
-                              {/* FIXED: Added shrink-0 to prevent text squishing */}
-                              className={`w-64 p-6 flex flex-col justify-between cursor-pointer group transition-all duration-300 relative overflow-hidden shrink-0 ${
+                              className={`w-64 md:w-72 p-6 flex flex-col justify-between cursor-pointer group transition-all duration-300 relative overflow-hidden shrink-0 ${
                                 matchesSearch ? 'opacity-100 hover:bg-white/5' : 'opacity-20 grayscale hover:opacity-40'
                               }`}
                               style={{ backgroundColor: `${period.color}20` }}
