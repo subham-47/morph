@@ -183,7 +183,7 @@ export default function TimeScale() {
               ></div>
               <button 
                 onClick={() => setSelectedPeriod(null)}
-                className="absolute top-6 right-6 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 text-slate-400 hover:text-white hover:bg-red-500/50 transition-all"
+                className="absolute top-4 right-4 z-50 w-10 h-10 flex items-center justify-center rounded-full bg-black/50 text-slate-400 hover:text-white hover:bg-red-500/50 transition-all cursor-pointer"
               >
                 ✕
               </button>
