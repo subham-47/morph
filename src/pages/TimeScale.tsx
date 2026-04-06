@@ -152,11 +152,13 @@ export default function TimeScale() {
         </header>
 
         {/* Main Timeline Board */}
-        <main className="flex-1 overflow-x-auto overflow-y-hidden bg-[radial-gradient(ellipse_at_bottom,#0f172a,#020617)] p-8 md:p-12 cursor-grab active:cursor-grabbing relative">
-          <div className="inline-flex flex-col gap-4 min-w-max h-full justify-center pb-20">
+        <main className="flex-1 overflow-x-auto overflow-y-hidden bg-[radial-gradient(ellipse_at_bottom,#0f172a,#020617)] p-8 md:p-12 cursor-grab active:cursor-grabbing relative scroll-smooth">
+          {/* FIXED: Changed to flex-row so Eons are side-by-side */}
+          <div className="inline-flex flex-row gap-6 min-w-max h-full items-center pb-10">
             
             {TIME_DATA.map((eon, eIdx) => (
-              <div key={eIdx} className="flex rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black/40 backdrop-blur-sm">
+              {/* FIXED: Added explicit height and shrink-0 so cards don't squish */}
+              <div key={eIdx} className="flex h-[400px] md:h-[450px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black/40 backdrop-blur-sm shrink-0">
                 
                 {/* Eon Label (Vertical) */}
                 <div 
@@ -164,17 +166,17 @@ export default function TimeScale() {
                   style={{ backgroundColor: `${eon.eon_color}40` }}
                 >
                   <span 
-                    className="font-display font-black text-xl tracking-widest uppercase -rotate-180" 
+                    className="font-display font-black text-xl tracking-widest uppercase -rotate-180 whitespace-nowrap" 
                     style={{ writingMode: 'vertical-rl', color: eon.eon === 'Phanerozoic' ? '#93c5fd' : '#86efac' }}
                   >
                     {eon.eon}
                   </span>
                 </div>
 
-                {/* Eras Container */}
-                <div className="flex flex-col divide-y divide-white/10">
+                {/* Eras Container - FIXED: Changed to flex-row and divide-x */}
+                <div className="flex flex-row divide-x divide-white/10">
                   {eon.eras.map((era, eraIdx) => (
-                    <div key={eraIdx} className="flex">
+                    <div key={eraIdx} className="flex flex-row shrink-0">
                       
                       {/* Era Label (Vertical) */}
                       <div 
@@ -182,15 +184,15 @@ export default function TimeScale() {
                         style={{ backgroundColor: `${era.color}40` }}
                       >
                         <span 
-                          className="font-bold text-xs tracking-widest uppercase -rotate-180 text-white/50" 
+                          className="font-bold text-xs tracking-widest uppercase -rotate-180 text-white/50 whitespace-nowrap" 
                           style={{ writingMode: 'vertical-rl' }}
                         >
                           {era.era}
                         </span>
                       </div>
 
-                      {/* Periods Row */}
-                      <div className="flex divide-x divide-white/10">
+                      {/* Periods Row - FIXED: Changed to flex-row */}
+                      <div className="flex flex-row divide-x divide-white/10">
                         {era.periods.map((period, pIdx) => {
                           
                           // Smart Search Filtering Logic
@@ -204,7 +206,8 @@ export default function TimeScale() {
                             <div 
                               key={pIdx} 
                               onClick={() => setSelectedPeriod({ ...period, era: era.era, eon: eon.eon })}
-                              className={`w-64 p-6 flex flex-col justify-between cursor-pointer group transition-all duration-300 relative overflow-hidden ${
+                              {/* FIXED: Added shrink-0 to prevent text squishing */}
+                              className={`w-64 p-6 flex flex-col justify-between cursor-pointer group transition-all duration-300 relative overflow-hidden shrink-0 ${
                                 matchesSearch ? 'opacity-100 hover:bg-white/5' : 'opacity-20 grayscale hover:opacity-40'
                               }`}
                               style={{ backgroundColor: `${period.color}20` }}
@@ -218,10 +221,10 @@ export default function TimeScale() {
                                 >
                                   {period.name}
                                 </h4>
-                                <div className="font-mono text-xs text-slate-400 bg-black/30 w-fit px-2 py-1 rounded border border-white/5 mb-4">
+                                <div className="font-mono text-xs text-slate-400 bg-black/30 w-fit px-2 py-1 rounded border border-white/5 mb-4 whitespace-nowrap">
                                   {period.time}
                                 </div>
-                                <p className="text-sm text-slate-300 line-clamp-3 leading-relaxed">
+                                <p className="text-sm text-slate-300 line-clamp-4 leading-relaxed">
                                   {period.desc}
                                 </p>
                               </div>
