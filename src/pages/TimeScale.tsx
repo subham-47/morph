@@ -156,7 +156,7 @@ export default function TimeScale() {
           
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
             
-            {/* --- UPGRADED SEARCH BAR WITH NEXT BUTTON --- */}
+            {/* --- UPGRADED SEARCH BAR WITH NEXT & CLEAR BUTTONS --- */}
             <div className="relative w-full sm:w-80 flex items-center">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
               <input 
@@ -165,31 +165,49 @@ export default function TimeScale() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => {
-                  // Pressing ENTER cycles to the next match automatically
                   if (e.key === 'Enter' && matchedPeriods.length > 0) {
                     setActiveMatchIndex((prev) => (prev + 1) % matchedPeriods.length);
                   }
+                  if (e.key === 'Escape') {
+                    setSearchQuery('');
+                    setActiveMatchIndex(0);
+                  }
                 }}
-                className="w-full bg-slate-900/80 border border-white/10 rounded-xl py-2.5 pl-10 pr-20 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors shadow-inner"
+                // FIXED: Increased padding-right (pr-28) to make room for the new buttons
+                className="w-full bg-slate-900/80 border border-white/10 rounded-xl py-2.5 pl-10 pr-28 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors shadow-inner"
               />
               
-              {/* Shows e.g., "1/3 ▼" when there are matches */}
-              {searchQuery.trim() !== '' && (
+              {/* Controls: Match Counter & Clear Button */}
+              {searchQuery !== '' && (
                 <div className="absolute right-2 flex items-center gap-1.5 text-xs font-mono text-slate-400 bg-slate-950/50 px-2 py-1 rounded-lg border border-white/5">
-                  {matchedPeriods.length > 0 ? (
-                    <>
-                      <span className="text-blue-400 font-bold">{activeMatchIndex + 1}/{matchedPeriods.length}</span>
-                      <button 
-                        onClick={() => setActiveMatchIndex((prev) => (prev + 1) % matchedPeriods.length)}
-                        className="hover:text-white hover:bg-white/10 p-0.5 rounded transition-colors"
-                        title="Next Match (Enter)"
-                      >
-                        ▼
-                      </button>
-                    </>
-                  ) : (
-                    <span className="text-red-400">0/0</span>
-                  )}
+                  {searchQuery.trim() !== '' ? (
+                    matchedPeriods.length > 0 ? (
+                      <>
+                        <span className="text-blue-400 font-bold">{activeMatchIndex + 1}/{matchedPeriods.length}</span>
+                        <button 
+                          onClick={() => setActiveMatchIndex((prev) => (prev + 1) % matchedPeriods.length)}
+                          className="hover:text-white hover:bg-white/10 p-0.5 rounded transition-colors"
+                          title="Next Match (Enter)"
+                        >
+                          ▼
+                        </button>
+                      </>
+                    ) : (
+                      <span className="text-red-400">0/0</span>
+                    )
+                  ) : null}
+                  
+                  {/* Vertical Divider */}
+                  <div className="w-px h-3 bg-white/20 mx-0.5"></div>
+                  
+                  {/* NEW: Clear Search Button */}
+                  <button 
+                    onClick={() => { setSearchQuery(''); setActiveMatchIndex(0); }}
+                    className="hover:text-white hover:bg-red-500/80 p-0.5 rounded transition-colors flex items-center justify-center"
+                    title="Clear Search (Esc)"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
                 </div>
               )}
             </div>
