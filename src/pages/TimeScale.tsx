@@ -152,12 +152,12 @@ export default function TimeScale() {
           </div>
         </header>
 
-        {/* Main Timeline Board */}
-        {/* FIXED: Moved horizontal padding (px) to the inner div so the browser doesn't clip the right edge */}
-        <main className="flex-1 overflow-x-auto overflow-y-hidden bg-[radial-gradient(ellipse_at_bottom,#0f172a,#020617)] py-8 md:py-12 cursor-auto relative scroll-smooth">
+       {/* Main Timeline Board */}
+        {/* FIXED: Added w-full and max-w-full to strictly bound the container to the screen so the scrollbar is forced to appear! */}
+        <main className="flex-1 w-full max-w-full overflow-x-auto overflow-y-hidden bg-[radial-gradient(ellipse_at_bottom,#0f172a,#020617)] py-8 md:py-12 cursor-auto scroll-smooth">
           
-          {/* FIXED: Added px-8 md:px-12 here, and an 'after:w-8' invisible spacer block to guarantee it scrolls all the way to the end! */}
-          <div className="flex flex-row gap-6 w-max h-full items-center px-8 md:px-12 pb-10 after:w-8 after:shrink-0">
+          {/* FIXED: Changed to inline-flex. This is the foolproof way to make horizontal scrolling work perfectly. */}
+          <div className="inline-flex flex-row gap-6 px-8 md:px-12 pb-10 pr-24">
             
             {TIME_DATA.map((eon, eIdx) => (
               <div key={eIdx} className="flex flex-row h-[400px] md:h-[450px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black/40 backdrop-blur-sm shrink-0">
@@ -175,7 +175,7 @@ export default function TimeScale() {
                   </span>
                 </div>
 
-                {/* Eras Container -> Strictly forced to be a row */}
+                {/* Eras Container */}
                 <div className="flex flex-row divide-x divide-white/10 shrink-0">
                   {eon.eras.map((era, eraIdx) => (
                     <div key={eraIdx} className="flex flex-row shrink-0">
@@ -193,7 +193,7 @@ export default function TimeScale() {
                         </span>
                       </div>
 
-                      {/* Periods Row -> Strictly forced to be a row */}
+                      {/* Periods Row */}
                       <div className="flex flex-row divide-x divide-white/10 shrink-0">
                         {era.periods.map((period, pIdx) => {
                           
