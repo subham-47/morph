@@ -110,7 +110,8 @@ export default function TimeScale() {
     <div className="flex h-screen bg-[#020617] text-slate-200 font-body overflow-hidden">
       
       {/* MAIN CONTENT AREA */}
-      <div className={`flex flex-col flex-1 transition-all duration-300 ${isChatOpen ? 'mr-80 md:mr-96' : 'mr-0'}`}>
+      {/* FIXED: Added min-w-0. This prevents the massive timeline from stretching the page off-screen! */}
+      <div className={`flex flex-col flex-1 min-w-0 transition-all duration-300 ${isChatOpen ? 'mr-80 md:mr-96' : 'mr-0'}`}>
         
         {/* Header */}
         <header className="p-6 md:px-12 md:pt-12 md:pb-6 border-b border-white/5 bg-slate-950/50 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 shrink-0 z-10 shadow-xl">
@@ -152,10 +153,11 @@ export default function TimeScale() {
         </header>
 
         {/* Main Timeline Board */}
-        <main className="flex-1 overflow-x-auto overflow-y-hidden bg-[radial-gradient(ellipse_at_bottom,#0f172a,#020617)] p-8 md:p-12 cursor-auto relative scroll-smooth">
+        {/* FIXED: Moved horizontal padding (px) to the inner div so the browser doesn't clip the right edge */}
+        <main className="flex-1 overflow-x-auto overflow-y-hidden bg-[radial-gradient(ellipse_at_bottom,#0f172a,#020617)] py-8 md:py-12 cursor-auto relative scroll-smooth">
           
-          {/* THE FIX: `w-max` forces the container to expand infinitely to the right, rather than wrapping or squishing */}
-          <div className="flex flex-row gap-6 w-max h-full items-center pb-10">
+          {/* FIXED: Added px-8 md:px-12 here, and an 'after:w-8' invisible spacer block to guarantee it scrolls all the way to the end! */}
+          <div className="flex flex-row gap-6 w-max h-full items-center px-8 md:px-12 pb-10 after:w-8 after:shrink-0">
             
             {TIME_DATA.map((eon, eIdx) => (
               <div key={eIdx} className="flex flex-row h-[400px] md:h-[450px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black/40 backdrop-blur-sm shrink-0">
