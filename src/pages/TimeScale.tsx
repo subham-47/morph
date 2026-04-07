@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft, Clock, Skull, Wind, Target, Search, MessageSquare, Send, X, Sparkles } from 'lucide-react';
 
@@ -66,14 +66,46 @@ const TIME_DATA = [
 export default function TimeScale() {
   const [selectedPeriod, setSelectedPeriod] = useState<any | null>(null);
   
-  // --- NEW: Smart Search & Chat State ---
+  // --- Smart Search & Chat State ---
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeMatchIndex, setActiveMatchIndex] = useState(0); // Tracks which search result we are focused on
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [messages, setMessages] = useState([
     { role: 'assistant', text: 'Hello! I am GeoChat. Ask me anything about the geological timeline, mass extinctions, or specific time periods!' }
   ]);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // --- Auto-Scrolling Search Logic ---
+  const flatPeriods = useMemo(() => {
+    return TIME_DATA.flatMap(eon => eon.eras.flatMap(era => era.periods));
+  }, []);
+
+  const matchedPeriods = useMemo(() => {
+    const q = searchQuery.toLowerCase().trim();
+    if (!q) return [];
+    return flatPeriods.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      p.desc.toLowerCase().includes(q) ||
+      p.fossils.toLowerCase().includes(q)
+    );
+  }, [searchQuery, flatPeriods]);
+
+  // Reset to first match whenever user types something new
+  useEffect(() => {
+    setActiveMatchIndex(0);
+  }, [searchQuery]);
+
+  // Scroll the active match into the center of the screen
+  useEffect(() => {
+    if (matchedPeriods.length > 0) {
+      const target = document.getElementById(`period-${matchedPeriods[activeMatchIndex].name}`);
+      if (target) {
+        // inline: 'center' flawlessly glides the horizontal scrollbar directly to the target
+        target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }
+    }
+  }, [activeMatchIndex, matchedPeriods]);
 
   // Auto-scroll chat to bottom
   useEffect(() => {
@@ -85,12 +117,10 @@ export default function TimeScale() {
     e?.preventDefault();
     if (!chatInput.trim()) return;
 
-    // Add user message
     const newMessages = [...messages, { role: 'user', text: chatInput }];
     setMessages(newMessages);
     setChatInput('');
 
-    // Simulate AI Response (In the future, hook this up to your API!)
     setTimeout(() => {
       setMessages(prev => [...prev, { 
         role: 'assistant', 
@@ -99,10 +129,9 @@ export default function TimeScale() {
     }, 1000);
   };
 
-  // Open chat and pre-fill a question about a specific period
   const askAIAboutPeriod = (periodName: string) => {
-    setSelectedPeriod(null); // Close the modal
-    setIsChatOpen(true);     // Open the chat
+    setSelectedPeriod(null);
+    setIsChatOpen(true);     
     setChatInput(`What were the most important geological and biological events during the ${periodName}?`);
   };
 
@@ -110,10 +139,8 @@ export default function TimeScale() {
     <div className="flex h-screen bg-[#020617] text-slate-200 font-body overflow-hidden">
       
       {/* MAIN CONTENT AREA */}
-      {/* FIXED: Added min-w-0. This prevents the massive timeline from stretching the page off-screen! */}
       <div className={`flex flex-col flex-1 min-w-0 transition-all duration-300 ${isChatOpen ? 'mr-80 md:mr-96' : 'mr-0'}`}>
         
-        {/* Header */}
         <header className="p-6 md:px-12 md:pt-12 md:pb-6 border-b border-white/5 bg-slate-950/50 flex flex-col md:flex-row justify-between items-start md:items-end gap-6 shrink-0 z-10 shadow-xl">
           <div>
             <nav className="mb-4">
@@ -127,18 +154,46 @@ export default function TimeScale() {
             <h1 className="text-4xl md:text-5xl font-display font-black">Geological <span className="text-blue-400 italic">Time Scale</span></h1>
           </div>
           
-          {/* Smart Search & Chat Controls */}
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
-            <div className="relative w-full sm:w-64">
+            
+            {/* --- UPGRADED SEARCH BAR WITH NEXT BUTTON --- */}
+            <div className="relative w-full sm:w-80 flex items-center">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
               <input 
                 type="text" 
                 placeholder="Search events, fossils..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-900/80 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors shadow-inner"
+                onKeyDown={(e) => {
+                  // Pressing ENTER cycles to the next match automatically
+                  if (e.key === 'Enter' && matchedPeriods.length > 0) {
+                    setActiveMatchIndex((prev) => (prev + 1) % matchedPeriods.length);
+                  }
+                }}
+                className="w-full bg-slate-900/80 border border-white/10 rounded-xl py-2.5 pl-10 pr-20 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-500 transition-colors shadow-inner"
               />
+              
+              {/* Shows e.g., "1/3 ▼" when there are matches */}
+              {searchQuery.trim() !== '' && (
+                <div className="absolute right-2 flex items-center gap-1.5 text-xs font-mono text-slate-400 bg-slate-950/50 px-2 py-1 rounded-lg border border-white/5">
+                  {matchedPeriods.length > 0 ? (
+                    <>
+                      <span className="text-blue-400 font-bold">{activeMatchIndex + 1}/{matchedPeriods.length}</span>
+                      <button 
+                        onClick={() => setActiveMatchIndex((prev) => (prev + 1) % matchedPeriods.length)}
+                        className="hover:text-white hover:bg-white/10 p-0.5 rounded transition-colors"
+                        title="Next Match (Enter)"
+                      >
+                        ▼
+                      </button>
+                    </>
+                  ) : (
+                    <span className="text-red-400">0/0</span>
+                  )}
+                </div>
+              )}
             </div>
+
             <button 
               onClick={() => setIsChatOpen(!isChatOpen)}
               className={`w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all border ${
@@ -152,17 +207,13 @@ export default function TimeScale() {
           </div>
         </header>
 
-       {/* Main Timeline Board */}
-        {/* FIXED: Added w-full and max-w-full to strictly bound the container to the screen so the scrollbar is forced to appear! */}
         <main className="flex-1 w-full max-w-full overflow-x-auto overflow-y-hidden bg-[radial-gradient(ellipse_at_bottom,#0f172a,#020617)] py-8 md:py-12 cursor-auto scroll-smooth">
           
-          {/* FIXED: Changed to inline-flex. This is the foolproof way to make horizontal scrolling work perfectly. */}
           <div className="inline-flex flex-row gap-6 px-8 md:px-12 pb-10 pr-24">
             
             {TIME_DATA.map((eon, eIdx) => (
               <div key={eIdx} className="flex flex-row h-[400px] md:h-[450px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black/40 backdrop-blur-sm shrink-0">
                 
-                {/* Eon Label (Vertical) */}
                 <div 
                   className="w-16 flex items-center justify-center border-r border-white/10 shrink-0"
                   style={{ backgroundColor: `${eon.eon_color}40` }}
@@ -175,12 +226,10 @@ export default function TimeScale() {
                   </span>
                 </div>
 
-                {/* Eras Container */}
                 <div className="flex flex-row divide-x divide-white/10 shrink-0">
                   {eon.eras.map((era, eraIdx) => (
                     <div key={eraIdx} className="flex flex-row shrink-0">
                       
-                      {/* Era Label (Vertical) */}
                       <div 
                         className="w-12 flex items-center justify-center border-r border-white/10 shrink-0"
                         style={{ backgroundColor: `${era.color}40` }}
@@ -193,23 +242,31 @@ export default function TimeScale() {
                         </span>
                       </div>
 
-                      {/* Periods Row */}
                       <div className="flex flex-row divide-x divide-white/10 shrink-0">
                         {era.periods.map((period, pIdx) => {
                           
-                          // Smart Search Filtering Logic
-                          const q = searchQuery.toLowerCase();
-                          const matchesSearch = q === '' || 
+                          // --- UPDATED SMART HIGHLIGHTING ---
+                          const q = searchQuery.toLowerCase().trim();
+                          const isMatched = q !== '' && (
                             period.name.toLowerCase().includes(q) || 
                             period.desc.toLowerCase().includes(q) || 
-                            period.fossils.toLowerCase().includes(q);
+                            period.fossils.toLowerCase().includes(q)
+                          );
+                          const isActiveMatch = isMatched && matchedPeriods[activeMatchIndex]?.name === period.name;
 
                           return (
                             <div 
                               key={pIdx} 
+                              id={`period-${period.name}`} // ID specifically for our scroll engine
                               onClick={() => setSelectedPeriod({ ...period, era: era.era, eon: eon.eon })}
-                              className={`w-64 md:w-72 p-6 flex flex-col justify-between cursor-pointer group transition-all duration-300 relative overflow-hidden shrink-0 ${
-                                matchesSearch ? 'opacity-100 hover:bg-white/5' : 'opacity-20 grayscale hover:opacity-40'
+                              className={`w-64 md:w-72 p-6 flex flex-col justify-between cursor-pointer group transition-all duration-500 relative overflow-hidden shrink-0 ${
+                                searchQuery.trim() === '' 
+                                  ? 'hover:bg-white/5 opacity-100' 
+                                  : isActiveMatch 
+                                    ? 'opacity-100 ring-2 ring-blue-500 bg-blue-500/10 shadow-[0_0_30px_rgba(59,130,246,0.3)] z-10' 
+                                    : isMatched 
+                                      ? 'opacity-100 hover:bg-white/5' 
+                                      : 'opacity-20 grayscale hover:opacity-40'
                               }`}
                               style={{ backgroundColor: `${period.color}20` }}
                             >
@@ -330,7 +387,6 @@ export default function TimeScale() {
                 <div className="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-2 flex justify-between items-center">
                   <span>{selectedPeriod.eon} EON • {selectedPeriod.era} ERA</span>
                   
-                  {/* NEW: Ask AI Button inside Modal */}
                   <button 
                     onClick={() => askAIAboutPeriod(selectedPeriod.name)}
                     className="flex items-center gap-1.5 bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 hover:text-indigo-200 px-3 py-1.5 rounded-lg transition-colors border border-indigo-500/30"
